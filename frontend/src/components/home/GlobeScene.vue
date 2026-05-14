@@ -1,11 +1,11 @@
 <template>
-  <div ref="containerRef" class="globe-scene" aria-label="实时全球路由 3D 地球">
-    <canvas ref="canvasRef" class="globe-canvas"></canvas>
+  <div ref="containerRef" class="globe-scene" :class="dark ? 'globe-dark' : 'globe-light'" aria-label="实时全球路由 3D 地球">
+    <canvas ref="canvasRef" class="globe-canvas" @pointerdown="onPointerDown"></canvas>
     <div class="globe-label-layer" aria-hidden="true">
       <div
         v-for="label in nodeLabels"
         :key="label.id"
-        :ref="(element) => setLabelRef(label.id, element)"
+        :ref="(el) => setLabelRef(label.id, el)"
         class="globe-node-label"
         :class="{ 'globe-node-label-hub': label.id === 'hub' }"
       >
@@ -13,13 +13,22 @@
         <span v-if="label.latency">{{ label.latency }}</span>
       </div>
     </div>
-    <div class="globe-vignette" aria-hidden="true"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, type ComponentPublicInstance } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch, type ComponentPublicInstance } from 'vue'
 import * as THREE from 'three'
+import {
+  DEFAULT_GLOBE_ROTATION,
+  HUB_POINT,
+  applyGlobeDragRotation,
+  latLngToVector3,
+  type GeoPoint,
+  type GlobeRotation
+} from './globeScene'
+
+const props = withDefaults(defineProps<{ dark?: boolean }>(), { dark: true })
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -32,13 +41,10 @@ let resizeObserver: ResizeObserver | null = null
 let globeGroup: THREE.Group | null = null
 let routeLines: THREE.Line[] = []
 let routeParticles: THREE.Mesh[] = []
+let globeRotation: GlobeRotation = { ...DEFAULT_GLOBE_ROTATION }
+let dragState: { pointerId: number, lastX: number, lastY: number, target: HTMLElement } | null = null
 const nodeObjects = new Map<string, THREE.Group>()
 const labelElements = new Map<string, HTMLElement>()
-
-type GeoPoint = {
-  lat: number
-  lng: number
-}
 
 type Route = {
   from: GeoPoint
@@ -55,10 +61,8 @@ type NodeLabel = {
   latency?: string
 }
 
-const hub = { lat: 23.35, lng: 116.68 }
-
 const nodeLabels: NodeLabel[] = [
-  { id: 'hub', name: '汕头', point: hub },
+  { id: 'hub', name: '汕头', point: HUB_POINT },
   { id: 'japan', name: '日本', latency: '98 ms', point: { lat: 35.68, lng: 139.76 } },
   { id: 'korea', name: '韩国', latency: '78 ms', point: { lat: 37.57, lng: 126.98 } },
   { id: 'singapore', name: '新加坡', latency: '58 ms', point: { lat: 1.35, lng: 103.82 } },
@@ -67,14 +71,17 @@ const nodeLabels: NodeLabel[] = [
   { id: 'us', name: '美国', latency: '186 ms', point: { lat: 37.77, lng: -122.42 } }
 ]
 
-const routes: Route[] = [
-  { from: hub, to: nodeLabels[1].point, color: 0x38bdf8, speed: 0.009, offset: 0.12 },
-  { from: hub, to: nodeLabels[2].point, color: 0x60a5fa, speed: 0.008, offset: 0.42 },
-  { from: hub, to: nodeLabels[3].point, color: 0x4ade80, speed: 0.0095, offset: 0.2 },
-  { from: hub, to: nodeLabels[4].point, color: 0x38bdf8, speed: 0.0075, offset: 0.64 },
-  { from: hub, to: nodeLabels[5].point, color: 0x60a5fa, speed: 0.0085, offset: 0.82 },
-  { from: hub, to: nodeLabels[6].point, color: 0x38bdf8, speed: 0.0068, offset: 0.34 }
-]
+function getRoutes(): Route[] {
+  const theme = getThemeColors()
+  return [
+    { from: HUB_POINT, to: nodeLabels[1].point, color: theme.routes[0], speed: 0.009, offset: 0.12 },
+    { from: HUB_POINT, to: nodeLabels[2].point, color: theme.routes[1], speed: 0.008, offset: 0.42 },
+    { from: HUB_POINT, to: nodeLabels[3].point, color: theme.routes[2], speed: 0.0095, offset: 0.2 },
+    { from: HUB_POINT, to: nodeLabels[4].point, color: theme.routes[0], speed: 0.0075, offset: 0.64 },
+    { from: HUB_POINT, to: nodeLabels[5].point, color: theme.routes[1], speed: 0.0085, offset: 0.82 },
+    { from: HUB_POINT, to: nodeLabels[6].point, color: theme.routes[0], speed: 0.0068, offset: 0.34 }
+  ]
+}
 
 function setLabelRef(id: string, element: Element | ComponentPublicInstance | null) {
   if (element instanceof HTMLElement) {
@@ -84,7 +91,51 @@ function setLabelRef(id: string, element: Element | ComponentPublicInstance | nu
   labelElements.delete(id)
 }
 
+function getThemeColors() {
+  if (props.dark) {
+    return {
+      ocean: ['#f8f8f8', '#ececec', '#d7d7d7'],
+      shallow: 'rgba(255, 255, 255, 0.44)',
+      land: 'rgba(178, 178, 178, 0.76)',
+      highland: 'rgba(116, 116, 116, 0.3)',
+      ice: 'rgba(255, 255, 255, 0.76)',
+      clouds: 'rgba(255, 255, 255, 0.18)',
+      matrix: 'rgba(0, 0, 0, 0.23)',
+      routes: [0x242424, 0x4a4a4a, 0x111111],
+      ambient: { color: 0xffffff, intensity: 1.12 },
+      keyLight: { color: 0xffffff, intensity: 1.85 },
+      rimLight: { color: 0xffffff, intensity: 0.8 },
+      emissive: { color: 0xffffff, intensity: 0.06 },
+      atmosphere: { color: 0xffffff, opacity: 0.1 },
+      wire: { color: 0x1f1f1f },
+      hubNode: 0x050505,
+      normalNode: 0x353535,
+      core: 0xffffff
+    }
+  }
+  return {
+    ocean: ['#ffffff', '#f1f1f1', '#dedede'],
+    shallow: 'rgba(255, 255, 255, 0.48)',
+    land: 'rgba(171, 171, 171, 0.68)',
+    highland: 'rgba(102, 102, 102, 0.24)',
+    ice: 'rgba(255, 255, 255, 0.82)',
+    clouds: 'rgba(255, 255, 255, 0.22)',
+    matrix: 'rgba(0, 0, 0, 0.21)',
+    routes: [0x181818, 0x4a4a4a, 0x6a6a6a],
+    ambient: { color: 0xffffff, intensity: 1.32 },
+    keyLight: { color: 0xffffff, intensity: 1.65 },
+    rimLight: { color: 0xffffff, intensity: 0.62 },
+    emissive: { color: 0xffffff, intensity: 0.04 },
+    atmosphere: { color: 0xffffff, opacity: 0.08 },
+    wire: { color: 0x2f2f2f },
+    hubNode: 0x080808,
+    normalNode: 0x444444,
+    core: 0xffffff
+  }
+}
+
 function createEarthTexture() {
+  const theme = getThemeColors()
   const canvas = document.createElement('canvas')
   canvas.width = 2048
   canvas.height = 1024
@@ -93,65 +144,139 @@ function createEarthTexture() {
   if (!ctx) return new THREE.CanvasTexture(canvas)
 
   const oceanGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-  oceanGradient.addColorStop(0, '#173a62')
-  oceanGradient.addColorStop(0.45, '#0c2748')
-  oceanGradient.addColorStop(1, '#04172d')
+  oceanGradient.addColorStop(0, theme.ocean[0])
+  oceanGradient.addColorStop(0.45, theme.ocean[1])
+  oceanGradient.addColorStop(1, theme.ocean[2])
   ctx.fillStyle = oceanGradient
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  ctx.fillStyle = 'rgba(148, 163, 132, 0.82)'
-  drawLand(ctx, [
-    [0.61, 0.32],
-    [0.69, 0.25],
-    [0.81, 0.29],
-    [0.88, 0.42],
-    [0.8, 0.54],
-    [0.67, 0.51],
-    [0.56, 0.42]
+  ctx.fillStyle = theme.shallow
+  drawGeoPolygon(ctx, [
+    [92, 31],
+    [108, 43],
+    [128, 45],
+    [146, 33],
+    [142, 18],
+    [122, 7],
+    [105, 12],
+    [95, 21]
   ])
-  drawLand(ctx, [
-    [0.64, 0.53],
-    [0.72, 0.54],
-    [0.8, 0.6],
-    [0.76, 0.72],
-    [0.64, 0.73],
-    [0.58, 0.63]
-  ])
-  drawLand(ctx, [
-    [0.43, 0.33],
-    [0.5, 0.27],
-    [0.58, 0.32],
-    [0.57, 0.45],
-    [0.48, 0.48],
-    [0.4, 0.42]
-  ])
-  drawLand(ctx, [
-    [0.29, 0.34],
-    [0.37, 0.29],
-    [0.43, 0.39],
-    [0.39, 0.52],
-    [0.28, 0.55],
-    [0.2, 0.45]
-  ])
-  drawLand(ctx, [
-    [0.16, 0.52],
-    [0.24, 0.55],
-    [0.31, 0.68],
-    [0.26, 0.82],
-    [0.17, 0.75],
-    [0.12, 0.62]
+  drawGeoPolygon(ctx, [
+    [96, 15],
+    [119, 22],
+    [132, 11],
+    [124, -4],
+    [105, -9],
+    [92, 0]
   ])
 
-  ctx.fillStyle = 'rgba(255, 225, 151, 0.92)'
-  for (let i = 0; i < 520; i += 1) {
-    const x = canvas.width * (0.52 + Math.random() * 0.38)
-    const y = canvas.height * (0.22 + Math.random() * 0.42)
-    const radius = Math.random() * 1.7 + 0.45
-    ctx.globalAlpha = Math.random() * 0.65 + 0.2
-    ctx.beginPath()
-    ctx.arc(x, y, radius, 0, Math.PI * 2)
-    ctx.fill()
-  }
+  ctx.fillStyle = theme.land
+  drawGeoPolygon(ctx, [
+    [-170, 62],
+    [-145, 71],
+    [-112, 72],
+    [-62, 58],
+    [-52, 44],
+    [-76, 24],
+    [-98, 17],
+    [-126, 28],
+    [-136, 46]
+  ])
+  drawGeoPolygon(ctx, [
+    [-82, 12],
+    [-62, 8],
+    [-45, -13],
+    [-50, -35],
+    [-64, -56],
+    [-76, -46],
+    [-81, -18]
+  ])
+  drawGeoPolygon(ctx, [
+    [-11, 36],
+    [20, 39],
+    [39, 31],
+    [51, 12],
+    [43, -13],
+    [32, -34],
+    [18, -35],
+    [5, -18],
+    [-11, 7],
+    [-17, 24]
+  ])
+  drawGeoPolygon(ctx, [
+    [-10, 36],
+    [13, 58],
+    [44, 70],
+    [78, 67],
+    [113, 61],
+    [146, 50],
+    [160, 36],
+    [144, 21],
+    [121, 18],
+    [109, 6],
+    [96, 16],
+    [73, 9],
+    [58, 22],
+    [44, 24],
+    [33, 36],
+    [17, 40]
+  ])
+  drawGeoPolygon(ctx, [
+    [109, -11],
+    [133, -10],
+    [153, -26],
+    [145, -41],
+    [116, -36],
+    [112, -23]
+  ])
+  drawGeoPolygon(ctx, [
+    [-51, 82],
+    [-21, 78],
+    [-18, 65],
+    [-42, 60],
+    [-62, 70]
+  ])
+  drawGeoPolygon(ctx, [
+    [-180, -61],
+    [-90, -64],
+    [0, -62],
+    [90, -64],
+    [180, -61],
+    [180, -90],
+    [-180, -90]
+  ])
+
+  ctx.fillStyle = theme.highland
+  drawGeoPolygon(ctx, [
+    [66, 39],
+    [80, 43],
+    [102, 37],
+    [108, 28],
+    [94, 23],
+    [73, 28]
+  ])
+  drawGeoPolygon(ctx, [
+    [-78, -2],
+    [-68, -11],
+    [-66, -42],
+    [-73, -49],
+    [-78, -28]
+  ])
+
+  ctx.fillStyle = theme.ice
+  drawGeoPolygon(ctx, [
+    [-180, 90],
+    [180, 90],
+    [180, 73],
+    [96, 70],
+    [12, 74],
+    [-72, 70],
+    [-180, 74]
+  ])
+
+  drawCloudBand(ctx, theme.clouds, 13, 0.14, 0.18)
+  drawCloudBand(ctx, theme.clouds, -34, 0.12, 0.12)
+  drawMatrixDots(ctx, theme.matrix)
   ctx.globalAlpha = 1
 
   const texture = new THREE.CanvasTexture(canvas)
@@ -161,30 +286,72 @@ function createEarthTexture() {
   return texture
 }
 
-function drawLand(ctx: CanvasRenderingContext2D, points: [number, number][]) {
+function geoToCanvasPoint(ctx: CanvasRenderingContext2D, longitude: number, latitude: number) {
   const { width, height } = ctx.canvas
+  return {
+    x: ((longitude + 180) / 360) * width,
+    y: ((90 - latitude) / 180) * height
+  }
+}
+
+function drawGeoPolygon(ctx: CanvasRenderingContext2D, points: [number, number][]) {
   ctx.beginPath()
-  points.forEach(([x, y], index) => {
-    const px = x * width
-    const py = y * height
+  points.forEach(([longitude, latitude], index) => {
+    const { x, y } = geoToCanvasPoint(ctx, longitude, latitude)
     if (index === 0) {
-      ctx.moveTo(px, py)
+      ctx.moveTo(x, y)
       return
     }
-    ctx.lineTo(px, py)
+    ctx.lineTo(x, y)
   })
   ctx.closePath()
   ctx.fill()
 }
 
-function latLngToVector3(point: GeoPoint, radius: number) {
-  const phi = THREE.MathUtils.degToRad(90 - point.lat)
-  const theta = THREE.MathUtils.degToRad(point.lng + 180)
-  return new THREE.Vector3(
-    -(radius * Math.sin(phi) * Math.cos(theta)),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta)
-  )
+function drawCloudBand(
+  ctx: CanvasRenderingContext2D,
+  color: string,
+  latitude: number,
+  amplitude: number,
+  opacity: number
+) {
+  const { width } = ctx.canvas
+  ctx.save()
+  ctx.globalAlpha = opacity
+  ctx.beginPath()
+  for (let x = 0; x <= width; x += 42) {
+    const longitude = (x / width) * 360 - 180
+    const waveLatitude = latitude + Math.sin(longitude * 0.045) * amplitude * 90
+    const point = geoToCanvasPoint(ctx, longitude, waveLatitude)
+    if (x === 0) {
+      ctx.moveTo(point.x, point.y)
+    } else {
+      ctx.lineTo(point.x, point.y)
+    }
+  }
+  ctx.lineWidth = 16
+  ctx.lineCap = 'round'
+  ctx.strokeStyle = color
+  ctx.stroke()
+  ctx.restore()
+}
+
+function drawMatrixDots(ctx: CanvasRenderingContext2D, color: string) {
+  const { width, height } = ctx.canvas
+  ctx.save()
+  ctx.fillStyle = color
+  for (let latitude = -66; latitude <= 66; latitude += 6) {
+    const rowScale = Math.max(0.3, Math.cos(THREE.MathUtils.degToRad(latitude)))
+    const y = ((90 - latitude) / 180) * height
+    for (let longitude = -180; longitude <= 180; longitude += 6) {
+      const x = ((longitude + 180) / 360) * width
+      const radius = 1.05 + rowScale * 0.7
+      ctx.beginPath()
+      ctx.arc(x, y, radius, 0, Math.PI * 2)
+      ctx.fill()
+    }
+  }
+  ctx.restore()
 }
 
 function createArcPoints(from: GeoPoint, to: GeoPoint, radius: number) {
@@ -201,8 +368,9 @@ function createRoute(route: Route) {
   const material = new THREE.LineBasicMaterial({
     color: route.color,
     transparent: true,
-    opacity: 0.96,
-    depthTest: false,
+    opacity: 0.9,
+    depthTest: true,
+    depthWrite: false,
     blending: THREE.AdditiveBlending
   })
   const line = new THREE.Line(geometry, material)
@@ -218,7 +386,8 @@ function createRoute(route: Route) {
       color: route.color,
       transparent: true,
       opacity: 0.95,
-      depthTest: false,
+      depthTest: true,
+      depthWrite: false,
       blending: THREE.AdditiveBlending
     })
   )
@@ -229,32 +398,6 @@ function createRoute(route: Route) {
   routeParticles.push(particle)
 
   return { line, particle }
-}
-
-function createStarField() {
-  const geometry = new THREE.BufferGeometry()
-  const positions: number[] = []
-  const colors: number[] = []
-
-  for (let i = 0; i < 800; i += 1) {
-    positions.push((Math.random() - 0.5) * 22, (Math.random() - 0.5) * 12, -Math.random() * 9 - 3)
-    const intensity = Math.random() * 0.45 + 0.45
-    colors.push(0.55 * intensity, 0.75 * intensity, intensity)
-  }
-
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
-
-  return new THREE.Points(
-    geometry,
-    new THREE.PointsMaterial({
-      size: 0.018,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.9,
-      sizeAttenuation: true
-    })
-  )
 }
 
 function createNode(point: GeoPoint, color = 0x60a5fa) {
@@ -268,12 +411,14 @@ function createNode(point: GeoPoint, color = 0x60a5fa) {
       color,
       transparent: true,
       opacity: 0.5,
+      depthTest: true,
+      depthWrite: false,
       blending: THREE.AdditiveBlending
     })
   )
   const core = new THREE.Mesh(
     new THREE.SphereGeometry(0.035, 16, 16),
-    new THREE.MeshBasicMaterial({ color: 0xe0f2fe })
+    new THREE.MeshBasicMaterial({ color: getThemeColors().core })
   )
   group.add(glow, core)
   return group
@@ -295,9 +440,6 @@ function resize() {
 function animate() {
   if (!renderer || !scene || !camera || !globeGroup) return
 
-  globeGroup.rotation.y += 0.0014
-  globeGroup.rotation.x = -0.22
-
   routeParticles.forEach((particle) => {
     const points = particle.userData.points as THREE.Vector3[]
     const progress = Number(particle.userData.progress)
@@ -313,12 +455,55 @@ function animate() {
   frameId = requestAnimationFrame(animate)
 }
 
+function applyRotationToGlobe() {
+  if (!globeGroup) return
+  globeGroup.rotation.set(globeRotation.x, globeRotation.y, globeRotation.z)
+}
+
+function onPointerDown(event: PointerEvent) {
+  if (!canvasRef.value) return
+
+  event.preventDefault()
+  dragState = {
+    pointerId: event.pointerId,
+    lastX: event.clientX,
+    lastY: event.clientY,
+    target: canvasRef.value
+  }
+  canvasRef.value.setPointerCapture(event.pointerId)
+  window.addEventListener('pointermove', onPointerMove)
+  window.addEventListener('pointerup', onPointerUp)
+  window.addEventListener('pointercancel', onPointerUp)
+}
+
+function onPointerMove(event: PointerEvent) {
+  if (!dragState || event.pointerId !== dragState.pointerId) return
+
+  const deltaX = event.clientX - dragState.lastX
+  const deltaY = event.clientY - dragState.lastY
+  dragState.lastX = event.clientX
+  dragState.lastY = event.clientY
+  globeRotation = applyGlobeDragRotation(globeRotation, { deltaX, deltaY })
+  applyRotationToGlobe()
+}
+
+function onPointerUp(event: PointerEvent) {
+  if (!dragState || event.pointerId !== dragState.pointerId) return
+
+  if (dragState.target.hasPointerCapture(event.pointerId)) {
+    dragState.target.releasePointerCapture(event.pointerId)
+  }
+  dragState = null
+  window.removeEventListener('pointermove', onPointerMove)
+  window.removeEventListener('pointerup', onPointerUp)
+  window.removeEventListener('pointercancel', onPointerUp)
+}
+
 function updateLabelPositions() {
   if (!containerRef.value || !camera) return
 
   const { clientWidth, clientHeight } = containerRef.value
-  const activeCamera = camera
-  const cameraPosition = activeCamera.position
+  const cameraPosition = camera.position
 
   nodeObjects.forEach((object, id) => {
     const element = labelElements.get(id)
@@ -329,7 +514,7 @@ function updateLabelPositions() {
     const normal = worldPosition.clone().normalize()
     const cameraDirection = cameraPosition.clone().sub(worldPosition).normalize()
     const isVisible = normal.dot(cameraDirection) > 0.08
-    const projected = worldPosition.clone().project(activeCamera)
+    const projected = worldPosition.clone().project(camera!)
     const x = (projected.x * 0.5 + 0.5) * clientWidth
     const y = (-projected.y * 0.5 + 0.5) * clientHeight
 
@@ -344,7 +529,7 @@ function initScene() {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100)
-  camera.position.set(0.18, 0.1, 7.35)
+  camera.position.set(0, 0, 7.35)
 
   renderer = new THREE.WebGLRenderer({
     canvas: canvasRef.value,
@@ -355,15 +540,18 @@ function initScene() {
   })
   renderer.outputColorSpace = THREE.SRGBColorSpace
 
-  const ambient = new THREE.AmbientLight(0x9fc5ff, 0.58)
-  const keyLight = new THREE.DirectionalLight(0xffffff, 2.4)
+  const theme = getThemeColors()
+
+  const ambient = new THREE.AmbientLight(theme.ambient.color, theme.ambient.intensity)
+  const keyLight = new THREE.DirectionalLight(theme.keyLight.color, theme.keyLight.intensity)
   keyLight.position.set(-3.2, 2.4, 4.5)
-  const rimLight = new THREE.DirectionalLight(0x38bdf8, 1.65)
+  const rimLight = new THREE.DirectionalLight(theme.rimLight.color, theme.rimLight.intensity)
   rimLight.position.set(3.6, -1.2, 2.2)
-  scene.add(ambient, keyLight, rimLight, createStarField())
+  scene.add(ambient, keyLight, rimLight)
 
   globeGroup = new THREE.Group()
-  globeGroup.rotation.set(-0.22, 1.65, 0.08)
+  globeRotation = { ...DEFAULT_GLOBE_ROTATION }
+  applyRotationToGlobe()
   scene.add(globeGroup)
 
   const earth = new THREE.Mesh(
@@ -372,17 +560,18 @@ function initScene() {
       map: createEarthTexture(),
       roughness: 0.86,
       metalness: 0.02,
-      emissive: new THREE.Color(0x082447),
-      emissiveIntensity: 0.18
+      emissive: new THREE.Color(theme.emissive.color),
+      emissiveIntensity: theme.emissive.intensity,
+      transparent: false
     })
   )
 
   const atmosphere = new THREE.Mesh(
     new THREE.SphereGeometry(2.08, 96, 96),
     new THREE.MeshBasicMaterial({
-      color: 0x3b82f6,
+      color: theme.atmosphere.color,
       transparent: true,
-      opacity: 0.16,
+      opacity: theme.atmosphere.opacity,
       side: THREE.BackSide,
       blending: THREE.AdditiveBlending
     })
@@ -391,20 +580,20 @@ function initScene() {
   const wire = new THREE.Mesh(
     new THREE.SphereGeometry(2.012, 64, 64),
     new THREE.MeshBasicMaterial({
-      color: 0x93c5fd,
+      color: theme.wire.color,
       wireframe: true,
       transparent: true,
-      opacity: 0.045
+      opacity: 0.018
     })
   )
 
   globeGroup.add(earth, atmosphere, wire)
-  routes.forEach((route) => {
+  getRoutes().forEach((route) => {
     const { line, particle } = createRoute(route)
     globeGroup?.add(line, particle)
   })
   nodeLabels.forEach((label) => {
-    const color = label.id === 'hub' ? 0x2563eb : 0x60a5fa
+    const color = label.id === 'hub' ? theme.hubNode : theme.normalNode
     const node = createNode(label.point, color)
     nodeObjects.set(label.id, node)
     globeGroup?.add(node)
@@ -416,15 +605,22 @@ function initScene() {
   frameId = requestAnimationFrame(animate)
 }
 
-onMounted(initScene)
-
-onBeforeUnmount(() => {
+function destroyScene() {
   cancelAnimationFrame(frameId)
+  if (dragState) {
+    if (dragState.target.hasPointerCapture(dragState.pointerId)) {
+      dragState.target.releasePointerCapture(dragState.pointerId)
+    }
+    dragState = null
+  }
+  window.removeEventListener('pointermove', onPointerMove)
+  window.removeEventListener('pointerup', onPointerUp)
+  window.removeEventListener('pointercancel', onPointerUp)
   resizeObserver?.disconnect()
+  resizeObserver = null
   routeLines = []
   routeParticles = []
   nodeObjects.clear()
-  labelElements.clear()
 
   if (scene) {
     scene.traverse((object: THREE.Object3D) => {
@@ -445,6 +641,18 @@ onBeforeUnmount(() => {
   scene = null
   camera = null
   globeGroup = null
+}
+
+onMounted(initScene)
+
+watch(() => props.dark, () => {
+  destroyScene()
+  initScene()
+})
+
+onBeforeUnmount(() => {
+  destroyScene()
+  labelElements.clear()
 })
 </script>
 
@@ -453,16 +661,20 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 58% 40%, rgba(37, 99, 235, 0.22), transparent 33%),
-    radial-gradient(circle at 35% 64%, rgba(14, 165, 233, 0.12), transparent 32%),
-    #020817;
+  background: transparent;
+  cursor: grab;
+  user-select: none;
 }
 
 .globe-canvas {
   display: block;
   width: 100%;
   height: 100%;
+  touch-action: none;
+}
+
+.globe-scene:active {
+  cursor: grabbing;
 }
 
 .globe-label-layer {
@@ -479,21 +691,15 @@ onBeforeUnmount(() => {
   display: inline-flex;
   max-width: 138px;
   align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
+  gap: 5px;
+  padding: 4px 7px;
   overflow: hidden;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   line-height: 1;
-  color: #dbeafe;
   text-overflow: ellipsis;
   white-space: nowrap;
-  background: rgba(4, 15, 31, 0.76);
-  border: 1px solid rgba(147, 197, 253, 0.46);
-  border-radius: 6px;
-  box-shadow:
-    0 10px 22px rgba(2, 8, 23, 0.35),
-    0 0 16px rgba(59, 130, 246, 0.14);
+  border-radius: 5px;
   opacity: 0;
   transition: opacity 180ms ease;
   will-change: transform, opacity;
@@ -501,45 +707,72 @@ onBeforeUnmount(() => {
 
 .globe-node-label::after {
   position: absolute;
-  bottom: -5px;
+  bottom: -4px;
   left: 50%;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   content: '';
-  background: rgba(4, 15, 31, 0.76);
-  border-right: 1px solid rgba(147, 197, 253, 0.46);
-  border-bottom: 1px solid rgba(147, 197, 253, 0.46);
   transform: translateX(-50%) rotate(45deg);
 }
 
-.globe-node-label span {
-  flex: 0 0 auto;
-  color: #93c5fd;
-  font-size: 11px;
-  font-weight: 700;
+/* Dark theme labels */
+.globe-dark .globe-node-label {
+  color: #d4d4d4;
+  background: rgba(10, 10, 10, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
-.globe-node-label-hub {
-  color: #eff6ff;
-  background: rgba(29, 78, 216, 0.82);
-  border-color: rgba(191, 219, 254, 0.72);
-  box-shadow:
-    0 12px 28px rgba(30, 64, 175, 0.42),
-    0 0 22px rgba(96, 165, 250, 0.42);
+.globe-dark .globe-node-label::after {
+  background: rgba(10, 10, 10, 0.82);
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.globe-node-label-hub::after {
-  background: rgba(29, 78, 216, 0.82);
-  border-color: rgba(191, 219, 254, 0.72);
+.globe-dark .globe-node-label span {
+  color: #a3a3a3;
+  font-size: 10px;
 }
 
-.globe-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(2, 8, 23, 0.58), transparent 22%, transparent 72%, rgba(2, 8, 23, 0.2)),
-    linear-gradient(180deg, rgba(2, 8, 23, 0.24), transparent 38%, rgba(2, 8, 23, 0.34));
+.globe-dark .globe-node-label-hub {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.globe-dark .globe-node-label-hub::after {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Light theme labels */
+.globe-light .globe-node-label {
+  color: #525252;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.globe-light .globe-node-label::after {
+  background: rgba(255, 255, 255, 0.88);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.globe-light .globe-node-label span {
+  color: #737373;
+  font-size: 10px;
+}
+
+.globe-light .globe-node-label-hub {
+  color: #0a0a0a;
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  font-weight: 800;
+}
+
+.globe-light .globe-node-label-hub::after {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 </style>
