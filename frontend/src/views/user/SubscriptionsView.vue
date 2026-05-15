@@ -1,6 +1,6 @@
 <template>
   <AppLayout>
-    <div class="space-y-6">
+    <div class="subscriptions-page">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center py-12">
         <div
@@ -9,10 +9,8 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="subscriptions.length === 0" class="card p-12 text-center">
-        <div
-          class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-dark-700"
-        >
+      <div v-else-if="subscriptions.length === 0" class="subscriptions-empty">
+        <div class="subscriptions-empty-icon">
           <Icon name="creditCard" size="xl" class="text-gray-400" />
         </div>
         <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -24,16 +22,16 @@
       </div>
 
       <!-- Subscriptions Grid -->
-      <div v-else class="grid gap-6 lg:grid-cols-2">
+      <div v-else class="subscriptions-list">
         <div
           v-for="subscription in subscriptions"
           :key="subscription.id"
-          class="overflow-hidden rounded-2xl border bg-white dark:bg-dark-800"
+          class="subscription-row"
           :class="platformBorderClass(subscription.group?.platform || '')"
         >
           <!-- Header -->
           <div
-            class="flex items-center justify-between border-b border-gray-100 p-4 dark:border-dark-700"
+            class="subscription-row-header"
           >
             <div class="flex items-center gap-3">
               <div :class="['h-1.5 w-1.5 shrink-0 rounded-full', platformAccentDotClass(subscription.group?.platform || '')]" />
@@ -75,7 +73,7 @@
           </div>
 
           <!-- Usage Progress -->
-          <div class="space-y-4 p-4">
+          <div class="subscription-row-body">
             <!-- Expiration Info -->
             <div v-if="subscription.expires_at" class="flex items-center justify-between text-sm">
               <span class="text-gray-500 dark:text-dark-400">{{
@@ -224,7 +222,7 @@
                 !subscription.group?.weekly_limit_usd &&
                 !subscription.group?.monthly_limit_usd
               "
-              class="flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 py-6 dark:from-emerald-900/20 dark:to-teal-900/20"
+              class="subscription-unlimited"
             >
               <div class="flex items-center gap-3">
                 <span class="text-4xl text-emerald-600 dark:text-emerald-400">∞</span>
@@ -364,3 +362,76 @@ onMounted(() => {
   loadSubscriptions()
 })
 </script>
+
+<style scoped>
+.subscriptions-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.subscriptions-empty {
+  padding: 56px 20px;
+  text-align: center;
+  border-block: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.subscriptions-empty-icon {
+  display: flex;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  align-items: center;
+  justify-content: center;
+  background: var(--user-panel-bg-muted, rgba(243, 245, 255, 0.66));
+  border-radius: 6px;
+}
+
+.subscriptions-list {
+  border-top: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.subscription-row {
+  padding: 22px 0;
+  border-width: 0 0 1px;
+  border-style: solid;
+  border-color: var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+  background: transparent;
+}
+
+.subscription-row-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.subscription-row-body {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.subscription-unlimited {
+  display: flex;
+  min-height: 84px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 8px;
+}
+
+@media (max-width: 1023px) {
+  .subscription-row-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 639px) {
+  .subscription-row-header {
+    flex-direction: column;
+  }
+}
+</style>

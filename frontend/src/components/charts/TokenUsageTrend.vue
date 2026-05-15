@@ -1,17 +1,17 @@
 <template>
-  <div class="card p-4">
-    <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+  <div :class="compact ? 'token-trend-panel token-trend-panel-compact' : 'card p-4'">
+    <h3 class="token-trend-title">
       {{ t('admin.dashboard.tokenUsageTrend') }}
     </h3>
-    <div v-if="loading" class="flex h-48 items-center justify-center">
+    <div v-if="loading" class="token-trend-chart flex items-center justify-center">
       <LoadingSpinner />
     </div>
-    <div v-else-if="trendData.length > 0 && chartData" class="h-48">
+    <div v-else-if="trendData.length > 0 && chartData" class="token-trend-chart">
       <Line :data="chartData" :options="lineOptions" />
     </div>
     <div
       v-else
-      class="flex h-48 items-center justify-center text-sm text-gray-500 dark:text-gray-400"
+      class="token-trend-empty"
     >
       {{ t('admin.dashboard.noDataAvailable') }}
     </div>
@@ -52,6 +52,7 @@ const { t } = useI18n()
 const props = defineProps<{
   trendData: TrendDataPoint[]
   loading?: boolean
+  compact?: boolean
 }>()
 
 const isDarkMode = computed(() => {
@@ -226,3 +227,65 @@ const formatCost = (value: number): string => {
   return value.toFixed(4)
 }
 </script>
+
+<style scoped>
+.token-trend-panel {
+  min-height: 316px;
+  padding: 24px 0 26px 34px;
+}
+
+.token-trend-panel-compact {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.token-trend-title {
+  margin-bottom: 18px;
+  color: var(--user-text-strong, #111827);
+  font-size: 15px;
+  font-weight: 720;
+}
+
+.token-trend-chart,
+.token-trend-empty {
+  height: 220px;
+}
+
+.token-trend-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--user-text-soft, #6b7280);
+  font-size: 13px;
+}
+
+.card .token-trend-title {
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.card .token-trend-chart,
+.card .token-trend-empty {
+  height: 192px;
+}
+
+@media (max-width: 1023px) {
+  .token-trend-panel {
+    padding: 24px 0 0;
+  }
+}
+
+@media (max-width: 639px) {
+  .token-trend-panel {
+    min-height: auto;
+    padding: 20px 0 0;
+  }
+
+  .token-trend-chart,
+  .token-trend-empty {
+    height: 200px;
+  }
+}
+</style>

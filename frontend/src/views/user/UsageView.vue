@@ -2,12 +2,12 @@
   <AppLayout>
     <TablePageLayout>
       <template #actions>
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <section class="usage-summary" aria-label="Usage summary">
           <!-- Total Requests -->
-          <div class="card p-4">
+          <div class="usage-metric usage-metric-blue">
           <div class="flex items-center gap-3">
-            <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-              <Icon name="document" size="md" class="text-blue-600 dark:text-blue-400" />
+            <div class="usage-metric-icon">
+              <Icon name="document" size="md" />
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -24,10 +24,10 @@
         </div>
 
         <!-- Total Tokens -->
-        <div class="card p-4">
+        <div class="usage-metric usage-metric-amber">
           <div class="flex items-center gap-3">
-            <div class="rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30">
-              <Icon name="cube" size="md" class="text-amber-600 dark:text-amber-400" />
+            <div class="usage-metric-icon">
+              <Icon name="cube" size="md" />
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -45,10 +45,10 @@
         </div>
 
         <!-- Total Cost -->
-        <div class="card p-4">
+        <div class="usage-metric usage-metric-green">
           <div class="flex items-center gap-3">
-            <div class="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
-              <Icon name="dollar" size="md" class="text-green-600 dark:text-green-400" />
+            <div class="usage-metric-icon">
+              <Icon name="dollar" size="md" />
             </div>
             <div class="min-w-0 flex-1">
               <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -67,10 +67,10 @@
         </div>
 
         <!-- Average Duration -->
-        <div class="card p-4">
+        <div class="usage-metric usage-metric-purple">
           <div class="flex items-center gap-3">
-            <div class="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
-              <Icon name="clock" size="md" class="text-purple-600 dark:text-purple-400" />
+            <div class="usage-metric-icon">
+              <Icon name="clock" size="md" />
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -83,15 +83,14 @@
             </div>
           </div>
         </div>
-        </div>
+        </section>
       </template>
 
       <template #filters>
-        <div class="card">
-          <div class="px-6 py-4">
+        <section class="usage-filters" aria-label="Usage filters">
           <div class="flex flex-wrap items-end gap-4">
             <!-- API Key Filter -->
-            <div class="min-w-[180px]">
+            <div class="filter-field">
               <label class="input-label">{{ t('usage.apiKeyFilter') }}</label>
               <Select
                 v-model="filters.api_key_id"
@@ -102,7 +101,7 @@
             </div>
 
             <!-- Date Range Filter -->
-            <div>
+            <div class="filter-field">
               <label class="input-label">{{ t('usage.timeRange') }}</label>
               <DateRangePicker
                 v-model:start-date="startDate"
@@ -112,7 +111,7 @@
             </div>
 
             <!-- Actions -->
-            <div class="ml-auto flex items-center gap-3">
+            <div class="filter-actions">
               <button @click="applyFilters" :disabled="loading" class="btn btn-secondary">
                 {{ t('common.refresh') }}
               </button>
@@ -144,8 +143,7 @@
               </button>
             </div>
           </div>
-        </div>
-        </div>
+        </section>
       </template>
 
       <template #table>
@@ -951,3 +949,134 @@ onMounted(() => {
   loadUsageStats()
 })
 </script>
+
+<style scoped>
+.usage-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.usage-metric {
+  min-width: 0;
+  padding: 18px 22px;
+  border-right: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.usage-metric:last-child {
+  border-right: 0;
+}
+
+.usage-metric > .flex {
+  align-items: flex-start;
+}
+
+.usage-metric-icon {
+  display: flex;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.usage-metric-blue .usage-metric-icon {
+  color: #2438b8;
+  background: rgba(62, 85, 233, 0.1);
+}
+
+.usage-metric-amber .usage-metric-icon {
+  color: #a16207;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.usage-metric-green .usage-metric-icon {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.usage-metric-purple .usage-metric-icon {
+  color: #6d28d9;
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.usage-metric :deep(.text-xs.font-medium),
+.usage-metric :deep(.text-xs) {
+  color: var(--user-text-soft, #737b8f);
+  letter-spacing: 0;
+}
+
+.usage-metric :deep(.text-xl) {
+  margin-top: 3px;
+  color: var(--user-text-strong, #15172b);
+  font-size: 21px;
+  font-weight: 740;
+  line-height: 1.2;
+}
+
+.usage-metric :deep(.line-through) {
+  color: var(--user-text-soft, #737b8f);
+  text-decoration-thickness: 1px;
+}
+
+.usage-filters {
+  padding: 0 0 20px;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.filter-field {
+  min-width: 190px;
+}
+
+.filter-actions {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 1023px) {
+  .usage-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .usage-metric:nth-child(2) {
+    border-right: 0;
+  }
+
+  .usage-metric:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+  }
+
+  .filter-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 639px) {
+  .usage-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .usage-metric,
+  .usage-metric:nth-child(2) {
+    border-right: 0;
+  }
+
+  .usage-metric:not(:last-child) {
+    border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+  }
+
+  .filter-field,
+  .filter-actions {
+    width: 100%;
+  }
+
+  .filter-actions {
+    flex-wrap: wrap;
+  }
+}
+</style>

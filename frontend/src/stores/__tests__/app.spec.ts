@@ -273,6 +273,19 @@ describe('useAppStore', () => {
       expect(store.publicSettingsLoaded).toBe(true)
     })
 
+    it('将旧默认品牌名归一化为 MyToken', () => {
+      const windowAny = window as any
+      windowAny.__APP_CONFIG__ = {
+        site_name: 'Sub2API',
+      }
+
+      const store = useAppStore()
+      store.initFromInjectedConfig()
+
+      expect(store.siteName).toBe('MyToken')
+      expect(store.cachedPublicSettings?.site_name).toBe('MyToken')
+    })
+
     it('无注入配置时返回 false', () => {
       const store = useAppStore()
       const result = store.initFromInjectedConfig()
@@ -331,6 +344,43 @@ describe('useAppStore', () => {
       expect((window as any).__APP_CONFIG__.table_page_size_options).toEqual([20, 100, 1000])
       expect(localStorage.getItem('table-page-size')).toBeNull()
       expect(localStorage.getItem('table-page-size-source')).toBeNull()
+    })
+
+    it('fetchPublicSettings 会返回归一化后的旧默认品牌名', async () => {
+      vi.mocked(getPublicSettings).mockResolvedValue({
+        registration_enabled: false,
+        email_verify_enabled: false,
+        registration_email_suffix_whitelist: [],
+        promo_code_enabled: true,
+        password_reset_enabled: false,
+        invitation_code_enabled: false,
+        turnstile_enabled: false,
+        turnstile_site_key: '',
+        site_name: 'Sub2API',
+        site_logo: '',
+        site_subtitle: '',
+        api_base_url: '',
+        contact_info: '',
+        doc_url: '',
+        home_content: '',
+        hide_ccs_import_button: false,
+        purchase_subscription_enabled: false,
+        purchase_subscription_url: '',
+        table_default_page_size: 20,
+        table_page_size_options: [10, 20, 50, 100],
+        custom_menu_items: [],
+        custom_endpoints: [],
+        linuxdo_oauth_enabled: false,
+        backend_mode_enabled: false,
+        version: ''
+      })
+
+      const store = useAppStore()
+      const result = await store.fetchPublicSettings(true)
+
+      expect(result?.site_name).toBe('MyToken')
+      expect(store.siteName).toBe('MyToken')
+      expect((window as any).__APP_CONFIG__.site_name).toBe('MyToken')
     })
   })
 })

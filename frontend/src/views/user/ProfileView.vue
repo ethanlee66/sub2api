@@ -16,7 +16,7 @@
 
       <div
         v-if="contactInfo"
-        class="card border-primary-200 bg-primary-50 p-6 dark:bg-primary-900/20"
+        class="profile-flat-panel profile-contact-panel"
       >
         <div class="flex items-center gap-4">
           <div class="rounded-xl bg-primary-100 p-3 text-primary-600">
@@ -106,3 +106,14 @@ onMounted(async () => {
   await Promise.all([profileRefresh, settingsLoad])
 })
 </script>
+
+<style scoped>
+.profile-flat-panel {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.profile-contact-panel {
+  color: var(--user-sidebar-active-text, #2438b8);
+}
+</style>

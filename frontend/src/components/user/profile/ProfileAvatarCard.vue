@@ -1,5 +1,5 @@
 <template>
-  <div :class="props.embedded ? 'space-y-4' : 'card'">
+  <div :class="props.embedded ? 'space-y-4' : 'profile-flat-panel'">
     <div
       v-if="!props.embedded"
       class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
@@ -15,8 +15,8 @@
     <div :class="props.embedded ? 'space-y-3' : 'flex flex-col gap-5 px-6 py-6 sm:flex-row sm:items-start'">
       <div
         :class="props.embedded
-          ? 'flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-xl font-bold text-white shadow-lg shadow-primary-500/20'
-          : 'flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-3xl font-bold text-white shadow-lg shadow-primary-500/20'"
+          ? 'profile-avatar-preview profile-avatar-preview-embedded'
+          : 'profile-avatar-preview profile-avatar-preview-large'"
       >
         <img
           v-if="avatarPreviewUrl"
@@ -268,3 +268,34 @@ async function handleAvatarDelete() {
   }
 }
 </script>
+
+<style scoped>
+.profile-flat-panel {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.profile-avatar-preview {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--user-button-primary-text, #f8faff);
+  background: var(--user-brand, #3e55e9);
+  border-radius: 8px;
+  font-weight: 760;
+}
+
+.profile-avatar-preview-embedded {
+  width: 64px;
+  height: 64px;
+  font-size: 20px;
+}
+
+.profile-avatar-preview-large {
+  width: 96px;
+  height: 96px;
+  font-size: 30px;
+}
+</style>

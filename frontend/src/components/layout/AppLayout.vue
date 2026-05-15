@@ -1,5 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-dark-950">
+  <div
+    class="min-h-screen bg-gray-50 dark:bg-dark-950"
+    :class="isAdminRoute ? 'app-shell-admin' : 'app-shell-user'"
+  >
     <!-- Background Decoration -->
     <div class="pointer-events-none fixed inset-0 bg-mesh-gradient"></div>
 
@@ -24,7 +27,8 @@
 
 <script setup lang="ts">
 import '@/styles/onboarding.css'
-import { computed, onMounted } from 'vue'
+import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores'
 import { useAuthStore } from '@/stores/auth'
 import { useOnboardingTour } from '@/composables/useOnboardingTour'
@@ -34,8 +38,11 @@ import AppHeader from './AppHeader.vue'
 
 const appStore = useAppStore()
 const authStore = useAuthStore()
+const route = useRoute()
 const sidebarCollapsed = computed(() => appStore.sidebarCollapsed)
 const isAdmin = computed(() => authStore.user?.role === 'admin')
+const isAdminRoute = computed(() => route.meta.requiresAdmin === true)
+const shellClass = computed(() => (isAdminRoute.value ? 'app-shell-admin' : 'app-shell-user'))
 
 const { replayTour } = useOnboardingTour({
   storageKey: isAdmin.value ? 'admin_guide' : 'user_guide',
@@ -46,6 +53,19 @@ const onboardingStore = useOnboardingStore()
 
 onMounted(() => {
   onboardingStore.setReplayCallback(replayTour)
+})
+
+watch(
+  shellClass,
+  (nextShell) => {
+    document.body.classList.remove('app-shell-user', 'app-shell-admin')
+    document.body.classList.add(nextShell)
+  },
+  { immediate: true }
+)
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('app-shell-user', 'app-shell-admin')
 })
 
 defineExpose({ replayTour })

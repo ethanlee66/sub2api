@@ -66,7 +66,7 @@ describe("admin settings auth source defaults helpers", () => {
 
   it("appends auth source defaults back onto update payload", () => {
     const payload: UpdateSettingsRequest = {
-      site_name: "Sub2API",
+      site_name: "MyToken",
     };
 
     appendAuthSourceDefaultsToUpdateRequest(payload, {
@@ -98,10 +98,24 @@ describe("admin settings auth source defaults helpers", () => {
         grant_on_signup: false,
         grant_on_first_bind: false,
       },
+      github: {
+        balance: 0,
+        concurrency: 5,
+        subscriptions: [],
+        grant_on_signup: false,
+        grant_on_first_bind: false,
+      },
+      google: {
+        balance: 0,
+        concurrency: 5,
+        subscriptions: [],
+        grant_on_signup: false,
+        grant_on_first_bind: false,
+      },
     });
 
     expect(payload).toMatchObject({
-      site_name: "Sub2API",
+      site_name: "MyToken",
       auth_source_default_email_balance: 1.25,
       auth_source_default_email_concurrency: 2,
       auth_source_default_email_subscriptions: [

@@ -7,7 +7,7 @@
       <div
         v-for="i in 6"
         :key="i"
-        class="p-5 rounded-2xl min-h-[280px] bg-white/70 dark:bg-dark-800/60 border border-gray-200/80 dark:border-dark-700/70 animate-pulse"
+        class="monitor-skeleton"
       >
         <div class="flex items-start gap-3">
           <div class="w-9 h-9 rounded-xl bg-gray-200 dark:bg-dark-700"></div>
@@ -79,3 +79,14 @@ function resolveAvailability(item: UserMonitorView): number | null {
   return props.window === '15d' ? primary.availability_15d ?? null : primary.availability_30d ?? null
 }
 </script>
+
+<style scoped>
+.monitor-skeleton {
+  min-height: 264px;
+  padding: 20px;
+  background: var(--user-panel-bg-muted, rgb(249 250 251 / 0.72));
+  border: 1px solid var(--user-panel-border-soft, rgb(229 231 235));
+  border-radius: 8px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>

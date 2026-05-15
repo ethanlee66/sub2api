@@ -1,5 +1,5 @@
 <template>
-  <div :class="props.embedded ? 'space-y-4' : 'card'">
+  <div :class="props.embedded ? 'space-y-4' : 'profile-flat-panel'">
     <div
       v-if="!props.embedded"
       class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
@@ -114,3 +114,10 @@ const handleChangePassword = async () => {
   }
 }
 </script>
+
+<style scoped>
+.profile-flat-panel {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+</style>

@@ -1,0 +1,207 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e7]
+      - generic [ref=e8]:
+        - generic [ref=e9]: Sub2API
+        - generic [ref=e10]: v0.1.126
+    - navigation [ref=e11]:
+      - generic [ref=e12]:
+        - link "仪表盘" [ref=e13] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e14]
+          - generic [ref=e16]: 仪表盘
+        - link "API 密钥" [ref=e17] [cursor=pointer]:
+          - /url: /keys
+          - img [ref=e18]
+          - generic [ref=e20]: API 密钥
+        - link "使用记录" [ref=e21] [cursor=pointer]:
+          - /url: /usage
+          - img [ref=e22]
+          - generic [ref=e24]: 使用记录
+        - link "渠道状态" [ref=e25] [cursor=pointer]:
+          - /url: /monitor
+          - img [ref=e26]
+          - generic [ref=e28]: 渠道状态
+        - link "我的订阅" [ref=e29] [cursor=pointer]:
+          - /url: /subscriptions
+          - img [ref=e30]
+          - generic [ref=e32]: 我的订阅
+        - link "兑换" [ref=e33] [cursor=pointer]:
+          - /url: /redeem
+          - img [ref=e34]
+          - generic [ref=e36]: 兑换
+        - link "个人资料" [ref=e37] [cursor=pointer]:
+          - /url: /profile
+          - img [ref=e38]
+          - generic [ref=e40]: 个人资料
+    - generic [ref=e41]:
+      - button "深色模式" [ref=e42] [cursor=pointer]:
+        - img [ref=e43]
+        - generic [ref=e45]: 深色模式
+      - button "收起" [ref=e46] [cursor=pointer]:
+        - img [ref=e47]
+        - generic [ref=e49]: 收起
+  - generic [ref=e50]:
+    - banner [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e54]:
+          - heading "使用记录" [level=1] [ref=e55]
+          - paragraph [ref=e56]: 查看和分析您的 API 使用历史
+        - generic [ref=e57]:
+          - button "公告" [ref=e59] [cursor=pointer]:
+            - img [ref=e60]
+          - button "🇨🇳 ZH" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]: 🇨🇳
+            - generic [ref=e65]: ZH
+            - img [ref=e66]
+          - generic [ref=e68]:
+            - img [ref=e69]
+            - generic [ref=e71]: $0.00
+          - button "User Menu" [ref=e73] [cursor=pointer]:
+            - generic [ref=e75]: 普通
+            - generic [ref=e76]:
+              - generic [ref=e77]: 普通用户
+              - generic [ref=e78]: user
+            - img [ref=e79]
+    - main [ref=e81]:
+      - generic [ref=e82]:
+        - region "Usage summary" [ref=e84]:
+          - generic [ref=e86]:
+            - img [ref=e88]
+            - generic [ref=e90]:
+              - paragraph [ref=e91]: 总请求数
+              - paragraph [ref=e92]: "0"
+              - paragraph [ref=e93]: 所选范围内
+          - generic [ref=e95]:
+            - img [ref=e97]
+            - generic [ref=e99]:
+              - paragraph [ref=e100]: 总 Token
+              - paragraph [ref=e101]: "0"
+              - paragraph [ref=e102]: "输入: 0 / 输出: 0"
+          - generic [ref=e104]:
+            - img [ref=e106]
+            - generic [ref=e108]:
+              - paragraph [ref=e109]: 总消费
+              - paragraph [ref=e110]: $0.0000
+              - paragraph [ref=e111]: 实际 / $0.0000 标准
+          - generic [ref=e113]:
+            - img [ref=e115]
+            - generic [ref=e117]:
+              - paragraph [ref=e118]: 平均耗时
+              - paragraph [ref=e119]: 0ms
+              - paragraph [ref=e120]: 每次请求
+        - region "Usage filters" [ref=e122]:
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: API 密钥
+              - button "Select option" [ref=e127] [cursor=pointer]:
+                - generic [ref=e128]: 全部密钥
+                - img [ref=e130]
+            - generic [ref=e132]:
+              - generic [ref=e133]: 时间范围
+              - button "近 7 天" [ref=e135] [cursor=pointer]:
+                - img [ref=e137]
+                - generic [ref=e139]: 近 7 天
+                - img [ref=e141]
+            - generic [ref=e143]:
+              - button "刷新" [disabled] [ref=e144]
+              - button "重置" [ref=e145] [cursor=pointer]
+              - button "导出 CSV" [ref=e146] [cursor=pointer]
+        - table [ref=e150]:
+          - rowgroup [ref=e151]:
+            - row "API 密钥 模型 推理强度 端点 类型 计费模式 Token 费用 首 Token 耗时 时间 User-Agent" [ref=e152]:
+              - columnheader "API 密钥" [ref=e153]:
+                - generic [ref=e155]: API 密钥
+              - columnheader "模型" [ref=e156] [cursor=pointer]:
+                - generic [ref=e157]:
+                  - generic [ref=e158]: 模型
+                  - img [ref=e160]
+              - columnheader "推理强度" [ref=e162]:
+                - generic [ref=e164]: 推理强度
+              - columnheader "端点" [ref=e165]:
+                - generic [ref=e167]: 端点
+              - columnheader "类型" [ref=e168]:
+                - generic [ref=e170]: 类型
+              - columnheader "计费模式" [ref=e171]:
+                - generic [ref=e173]: 计费模式
+              - columnheader "Token" [ref=e174]:
+                - generic [ref=e176]: Token
+              - columnheader "费用" [ref=e177]:
+                - generic [ref=e179]: 费用
+              - columnheader "首 Token" [ref=e180]:
+                - generic [ref=e182]: 首 Token
+              - columnheader "耗时" [ref=e183]:
+                - generic [ref=e185]: 耗时
+              - columnheader "时间" [ref=e186] [cursor=pointer]:
+                - generic [ref=e187]:
+                  - generic [ref=e188]: 时间
+                  - img [ref=e190]
+              - columnheader "User-Agent" [ref=e192]:
+                - generic [ref=e194]: User-Agent
+          - rowgroup [ref=e195]:
+            - row [ref=e196]:
+              - cell [ref=e197]
+              - cell [ref=e200]
+              - cell [ref=e203]
+              - cell [ref=e206]
+              - cell [ref=e209]
+              - cell [ref=e212]
+              - cell [ref=e215]
+              - cell [ref=e218]
+              - cell [ref=e221]
+              - cell [ref=e224]
+              - cell [ref=e227]
+              - cell [ref=e230]
+            - row [ref=e233]:
+              - cell [ref=e234]
+              - cell [ref=e237]
+              - cell [ref=e240]
+              - cell [ref=e243]
+              - cell [ref=e246]
+              - cell [ref=e249]
+              - cell [ref=e252]
+              - cell [ref=e255]
+              - cell [ref=e258]
+              - cell [ref=e261]
+              - cell [ref=e264]
+              - cell [ref=e267]
+            - row [ref=e270]:
+              - cell [ref=e271]
+              - cell [ref=e274]
+              - cell [ref=e277]
+              - cell [ref=e280]
+              - cell [ref=e283]
+              - cell [ref=e286]
+              - cell [ref=e289]
+              - cell [ref=e292]
+              - cell [ref=e295]
+              - cell [ref=e298]
+              - cell [ref=e301]
+              - cell [ref=e304]
+            - row [ref=e307]:
+              - cell [ref=e308]
+              - cell [ref=e311]
+              - cell [ref=e314]
+              - cell [ref=e317]
+              - cell [ref=e320]
+              - cell [ref=e323]
+              - cell [ref=e326]
+              - cell [ref=e329]
+              - cell [ref=e332]
+              - cell [ref=e335]
+              - cell [ref=e338]
+              - cell [ref=e341]
+            - row [ref=e344]:
+              - cell [ref=e345]
+              - cell [ref=e348]
+              - cell [ref=e351]
+              - cell [ref=e354]
+              - cell [ref=e357]
+              - cell [ref=e360]
+              - cell [ref=e363]
+              - cell [ref=e366]
+              - cell [ref=e369]
+              - cell [ref=e372]
+              - cell [ref=e375]
+              - cell [ref=e378]

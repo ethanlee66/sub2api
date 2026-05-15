@@ -732,6 +732,383 @@
   .table-wrapper thead.sticky {
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   }
+
+  /* ============ 用户端 /home 风格覆盖 ============ */
+  .app-shell-user {
+    --user-brand: #3e55e9;
+    --user-brand-hover: #2f43c9;
+    --user-brand-strong: #2438b8;
+    --user-brand-mid: #667dff;
+    --user-brand-label: #8ea0ff;
+    --user-brand-soft: #f3f5ff;
+    --user-brand-border: #c8d1ff;
+    --user-brand-divider: #dde4ff;
+    --user-cyan: #38bdf8;
+    --user-radius-control: 6px;
+    --user-radius-panel: 8px;
+    --user-motion-fast: 160ms ease;
+    --user-motion-standard: 180ms ease;
+    --user-page-bg-start: rgba(243, 245, 255, 1);
+    --user-page-bg-mid: rgba(248, 250, 252, 0.96);
+    --user-page-bg-end: rgba(255, 255, 255, 1);
+    --user-page-glow-brand: rgba(62, 85, 233, 0.11);
+    --user-page-glow-cyan: rgba(56, 189, 248, 0.07);
+    --user-text-strong: #15172b;
+    --user-text-body: #596074;
+    --user-text-muted: #5f6678;
+    --user-text-soft: #737b8f;
+    --user-header-bg: rgba(243, 245, 255, 0.9);
+    --user-header-border: rgba(62, 85, 233, 0.2);
+    --user-control-bg: rgba(255, 255, 255, 0.72);
+    --user-control-bg-strong: rgba(255, 255, 255, 0.9);
+    --user-control-border: #d6d9e4;
+    --user-control-hover: #eef2ff;
+    --user-panel-bg: rgba(255, 255, 255, 0.78);
+    --user-panel-bg-muted: rgba(243, 245, 255, 0.66);
+    --user-panel-border: rgba(200, 209, 255, 0.84);
+    --user-panel-border-soft: rgba(200, 209, 255, 0.52);
+    --user-panel-shadow: 0 1px 0 rgba(62, 85, 233, 0.06);
+    --user-button-primary-bg: var(--user-brand);
+    --user-button-primary-text: #f8faff;
+    --user-button-primary-hover: var(--user-brand-hover);
+    --user-button-primary-shadow: 0 10px 24px rgba(62, 85, 233, 0.22);
+    --user-sidebar-bg: rgba(243, 245, 255, 0.9);
+    --user-sidebar-border: rgba(62, 85, 233, 0.2);
+    --user-sidebar-active-bg: rgba(62, 85, 233, 0.1);
+    --user-sidebar-active-text: var(--user-brand-strong);
+    --user-sidebar-hover-bg: rgba(62, 85, 233, 0.07);
+    color: var(--user-text-strong);
+    background:
+      linear-gradient(180deg, var(--user-page-bg-start) 0%, var(--user-page-bg-mid) 48%, var(--user-page-bg-end) 100%),
+      linear-gradient(126deg, var(--user-page-glow-brand) 0%, transparent 36%, var(--user-page-glow-cyan) 78%, transparent 100%);
+  }
+
+  .dark .app-shell-user {
+    --user-page-bg-start: rgba(2, 6, 23, 1);
+    --user-page-bg-mid: rgba(12, 18, 54, 0.98);
+    --user-page-bg-end: rgba(2, 6, 23, 1);
+    --user-page-glow-brand: rgba(62, 85, 233, 0.2);
+    --user-page-glow-cyan: rgba(14, 165, 233, 0.1);
+    --user-text-strong: #f8faff;
+    --user-text-body: #aeb6d2;
+    --user-text-muted: #c6ccdc;
+    --user-text-soft: #9099b5;
+    --user-header-bg: rgba(2, 6, 23, 0.92);
+    --user-header-border: rgba(142, 160, 255, 0.2);
+    --user-control-bg: rgba(255, 255, 255, 0.05);
+    --user-control-bg-strong: rgba(15, 23, 42, 0.74);
+    --user-control-border: rgba(255, 255, 255, 0.15);
+    --user-control-hover: rgba(62, 85, 233, 0.16);
+    --user-panel-bg: rgba(15, 23, 42, 0.62);
+    --user-panel-bg-muted: rgba(15, 23, 42, 0.44);
+    --user-panel-border: rgba(142, 160, 255, 0.18);
+    --user-panel-border-soft: rgba(142, 160, 255, 0.12);
+    --user-panel-shadow: 0 1px 0 rgba(142, 160, 255, 0.08);
+    --user-button-primary-bg: var(--user-brand-label);
+    --user-button-primary-text: #0f172a;
+    --user-button-primary-hover: #aab7ff;
+    --user-button-primary-shadow: 0 10px 24px rgba(62, 85, 233, 0.3);
+    --user-sidebar-bg: rgba(2, 6, 23, 0.92);
+    --user-sidebar-border: rgba(142, 160, 255, 0.2);
+    --user-sidebar-active-bg: rgba(62, 85, 233, 0.16);
+    --user-sidebar-active-text: var(--user-brand-label);
+    --user-sidebar-hover-bg: rgba(62, 85, 233, 0.12);
+  }
+
+  .app-shell-user .bg-mesh-gradient {
+    display: none;
+  }
+
+  .app-shell-user > .relative {
+    background: transparent;
+  }
+
+  .app-shell-user main {
+    @apply mx-auto w-full max-w-[1780px] px-5 py-5 sm:px-8 lg:py-6;
+  }
+
+  .app-shell-user .glass {
+    background: var(--user-header-bg);
+    border-color: var(--user-header-border);
+    backdrop-filter: blur(18px);
+    box-shadow: none;
+  }
+
+  .app-shell-user .sidebar {
+    background: var(--user-sidebar-bg);
+    border-color: var(--user-sidebar-border);
+    backdrop-filter: blur(18px);
+  }
+
+  .app-shell-user .sidebar-header {
+    border-color: var(--user-sidebar-border);
+  }
+
+  .app-shell-user .sidebar-logo {
+    border-radius: var(--user-radius-control);
+    box-shadow: 0 8px 20px rgba(62, 85, 233, 0.24);
+  }
+
+  .app-shell-user .sidebar-brand-title,
+  .app-shell-user h1,
+  .app-shell-user h2,
+  .app-shell-user h3 {
+    color: var(--user-text-strong);
+  }
+
+  .app-shell-user .sidebar-link {
+    border-radius: var(--user-radius-control);
+    color: var(--user-text-muted);
+  }
+
+  .app-shell-user .sidebar-link:hover {
+    color: var(--user-text-strong);
+    background: var(--user-sidebar-hover-bg);
+  }
+
+  .app-shell-user .sidebar-link-active {
+    color: var(--user-sidebar-active-text);
+    background: var(--user-sidebar-active-bg);
+  }
+
+  .app-shell-user .sidebar-link-active:hover {
+    color: var(--user-sidebar-active-text);
+    background: var(--user-sidebar-active-bg);
+  }
+
+  .app-shell-user .sidebar-section-title {
+    color: var(--user-text-soft);
+    letter-spacing: 0;
+  }
+
+  .app-shell-user .card,
+  .app-shell-user .glass-card,
+  .app-shell-user .card-glass,
+  .app-shell-user .stat-card {
+    border-color: var(--user-panel-border);
+    border-radius: var(--user-radius-panel);
+    background: var(--user-panel-bg);
+    box-shadow: var(--user-panel-shadow);
+    backdrop-filter: blur(16px);
+  }
+
+  .app-shell-user .card-hover:hover {
+    transform: translateY(-1px);
+    border-color: var(--user-brand-border);
+    box-shadow: 0 8px 24px rgba(62, 85, 233, 0.12);
+  }
+
+  .app-shell-user .card-header,
+  .app-shell-user .card-footer,
+  .app-shell-user .modal-header,
+  .app-shell-user .modal-footer,
+  .app-shell-user .dialog-header,
+  .app-shell-user .dialog-footer {
+    border-color: var(--user-panel-border-soft);
+  }
+
+  .app-shell-user .card-body {
+    @apply p-5;
+  }
+
+  .app-shell-user .btn,
+  .app-shell-user .input,
+  .app-shell-user .dropdown,
+  .app-shell-user .tabs,
+  .app-shell-user .tab,
+  .app-shell-user .table-container,
+  .app-shell-user .modal-content,
+  .app-shell-user .dialog-container,
+  .app-shell-user .code-block {
+    border-radius: var(--user-radius-control);
+  }
+
+  .app-shell-user .btn-primary,
+  body.app-shell-user .modal-overlay .btn-primary {
+    color: var(--user-button-primary-text);
+    background: var(--user-button-primary-bg);
+    box-shadow: var(--user-button-primary-shadow);
+  }
+
+  .app-shell-user .btn-primary:hover,
+  body.app-shell-user .modal-overlay .btn-primary:hover {
+    background: var(--user-button-primary-hover);
+    box-shadow: var(--user-button-primary-shadow);
+  }
+
+  .app-shell-user .bg-primary-500,
+  .app-shell-user .bg-primary-600,
+  .app-shell-user .bg-primary-700,
+  body.app-shell-user .modal-overlay .bg-primary-500,
+  body.app-shell-user .modal-overlay .bg-primary-600,
+  body.app-shell-user .modal-overlay .bg-primary-700 {
+    background: var(--user-button-primary-bg);
+  }
+
+  .app-shell-user .hover\:bg-primary-600:hover,
+  .app-shell-user .hover\:bg-primary-700:hover,
+  body.app-shell-user .modal-overlay .hover\:bg-primary-600:hover,
+  body.app-shell-user .modal-overlay .hover\:bg-primary-700:hover {
+    background: var(--user-button-primary-hover);
+  }
+
+  .app-shell-user .btn-secondary,
+  .app-shell-user .input,
+  .app-shell-user .dropdown,
+  .app-shell-user .modal-content,
+  .app-shell-user .dialog-container {
+    color: var(--user-text-strong);
+    background: var(--user-control-bg-strong);
+    border-color: var(--user-control-border);
+    box-shadow: var(--user-panel-shadow);
+  }
+
+  .app-shell-user .btn-ghost:hover,
+  .app-shell-user .dropdown-item:hover,
+  .app-shell-user .tab:hover {
+    background: var(--user-control-hover);
+  }
+
+  .app-shell-user .table-container {
+    border-color: var(--user-panel-border);
+    background: var(--user-panel-bg);
+  }
+
+  .app-shell-user .table th {
+    color: var(--user-text-muted);
+    background: var(--user-panel-bg-muted);
+    border-color: var(--user-panel-border-soft);
+  }
+
+  .app-shell-user .table td {
+    color: var(--user-text-body);
+    border-color: var(--user-panel-border-soft);
+  }
+
+  .app-shell-user .table tbody tr:hover {
+    background: var(--user-control-hover);
+  }
+
+  .app-shell-user .tabs {
+    background: var(--user-panel-bg-muted);
+  }
+
+  .app-shell-user .tab-active {
+    color: var(--user-text-strong);
+    background: var(--user-control-bg-strong);
+    box-shadow: var(--user-panel-shadow);
+  }
+
+  .app-shell-user .badge,
+  .app-shell-user .progress,
+  .app-shell-user .switch,
+  .app-shell-user .skeleton {
+    border-radius: var(--user-radius-control);
+  }
+
+  .app-shell-user .progress-bar,
+  .app-shell-user .switch-active {
+    background: var(--user-brand);
+  }
+
+  .app-shell-user .rounded-2xl,
+  .app-shell-user .rounded-3xl,
+  .app-shell-user .rounded-xl,
+  .app-shell-user .rounded-lg {
+    border-radius: var(--user-radius-control);
+  }
+
+  .app-shell-user .shadow,
+  .app-shell-user .shadow-sm,
+  .app-shell-user .shadow-md,
+  .app-shell-user .shadow-lg,
+  .app-shell-user .shadow-xl,
+  .app-shell-user .shadow-2xl,
+  .app-shell-user .shadow-card,
+  .app-shell-user .shadow-card-hover,
+  .app-shell-user .shadow-glass,
+  .app-shell-user .shadow-glow {
+    box-shadow: var(--user-panel-shadow);
+  }
+
+  .app-shell-user .card .card {
+    background: transparent;
+    border-color: var(--user-panel-border-soft);
+    box-shadow: none;
+  }
+
+  .app-shell-user .bg-white,
+  .app-shell-user .bg-white\/70,
+  .app-shell-user .bg-white\/80,
+  .app-shell-user .bg-white\/85,
+  .app-shell-user .bg-white\/90,
+  .app-shell-user .bg-gray-50,
+  .app-shell-user .bg-gray-50\/70,
+  .app-shell-user .bg-gray-50\/80,
+  .app-shell-user .dark\:bg-dark-800:where(.dark, .dark *),
+  .app-shell-user .dark\:bg-dark-800\/50:where(.dark, .dark *),
+  .app-shell-user .dark\:bg-dark-900:where(.dark, .dark *),
+  .app-shell-user .dark\:bg-dark-900\/30:where(.dark, .dark *),
+  .app-shell-user .dark\:bg-dark-900\/40:where(.dark, .dark *) {
+    background: var(--user-panel-bg-muted);
+  }
+
+  .app-shell-user .hover\:bg-gray-100:hover,
+  .app-shell-user .dark\:hover\:bg-dark-800:hover:where(.dark, .dark *),
+  .app-shell-user .dark\:hover\:bg-dark-700:hover:where(.dark, .dark *) {
+    background: var(--user-control-hover);
+  }
+
+  .app-shell-user .border-gray-100,
+  .app-shell-user .border-gray-200,
+  .app-shell-user .dark\:border-dark-600:where(.dark, .dark *),
+  .app-shell-user .dark\:border-dark-700:where(.dark, .dark *),
+  .app-shell-user .dark\:border-dark-800:where(.dark, .dark *) {
+    border-color: var(--user-panel-border-soft);
+  }
+
+  .app-shell-user .text-primary-600,
+  .app-shell-user .text-primary-700,
+  .app-shell-user .dark\:text-primary-300:where(.dark, .dark *),
+  .app-shell-user .dark\:text-primary-400:where(.dark, .dark *) {
+    color: var(--user-sidebar-active-text);
+  }
+
+  .app-shell-user .bg-primary-50,
+  .app-shell-user .bg-primary-100,
+  .app-shell-user .dark\:bg-primary-900\/20:where(.dark, .dark *),
+  .app-shell-user .dark\:bg-primary-900\/30:where(.dark, .dark *) {
+    background: var(--user-sidebar-active-bg);
+  }
+
+  .app-shell-user .border-primary-200,
+  .app-shell-user .dark\:border-primary-800\/50:where(.dark, .dark *) {
+    border-color: var(--user-brand-border);
+  }
+
+  .app-shell-user .card.bg-gradient-to-r,
+  .app-shell-user .card.bg-gradient-to-br,
+  .app-shell-user .card .bg-gradient-to-r,
+  .app-shell-user .card .bg-gradient-to-br {
+    background-image: none;
+    background-color: var(--user-panel-bg-muted);
+  }
+
+  .app-shell-user header.glass {
+    background: var(--user-header-bg);
+    border-color: var(--user-header-border);
+    box-shadow: none;
+  }
+
+  .app-shell-user aside.sidebar {
+    background: var(--user-sidebar-bg);
+    border-color: var(--user-sidebar-border);
+  }
+
+  .dark .app-shell-user .progress-bar,
+  .dark .app-shell-user .switch-active {
+    background: var(--user-brand-label);
+  }
 }
 
 @layer utilities {

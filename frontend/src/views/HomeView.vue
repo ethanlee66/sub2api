@@ -9,19 +9,19 @@
     <div v-else v-html="homeContent"></div>
   </div>
 
-  <div v-else class="landing-page min-h-screen" :class="isDark ? 'is-dark bg-neutral-950 text-white' : 'is-light bg-neutral-50 text-neutral-950'">
-    <header class="sticky top-0 z-40 border-b backdrop-blur-xl" :class="isDark ? 'border-white/10 bg-neutral-950/92' : 'border-neutral-200 bg-neutral-50/92'">
+  <div v-else class="landing-page min-h-screen" :class="isDark ? 'is-dark' : 'is-light'">
+    <header class="home-header sticky top-0 z-40 border-b backdrop-blur-xl">
       <nav class="mx-auto flex h-16 max-w-[1780px] items-center justify-between px-5 sm:px-8">
         <router-link to="/home" class="flex min-w-0 items-center gap-3" aria-label="AI API Studio">
           <span class="brand-mark" aria-hidden="true">
-            <span></span>
+            <img src="/logo.png" alt="" class="h-full w-full object-contain" />
           </span>
-          <span class="truncate text-[18px] font-bold tracking-tight sm:text-[20px]" :class="isDark ? 'text-white' : 'text-neutral-950'">
+          <span class="home-brand-name truncate font-bold tracking-tight">
             {{ siteName }}
           </span>
         </router-link>
 
-        <div class="hidden items-center gap-8 text-[14px] font-medium lg:flex" :class="isDark ? 'text-neutral-300' : 'text-neutral-600'">
+        <div class="home-nav hidden items-center gap-8 font-medium lg:flex">
           <a href="#features" class="nav-link">产品</a>
           <a href="#trust" class="nav-link">价格</a>
           <a
@@ -38,16 +38,14 @@
 
         <div class="flex items-center gap-2 sm:gap-4">
           <button
-            class="hidden h-9 items-center gap-2.5 rounded-md border px-3 text-xs font-medium md:inline-flex"
-            :class="isDark ? 'border-white/15 bg-white/5 text-neutral-300' : 'border-neutral-300 bg-white/70 text-neutral-500'"
+            class="home-status-badge hidden h-9 items-center gap-2.5 rounded-md border px-3 font-medium md:inline-flex"
             type="button"
           >
-            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+            <span class="home-status-dot h-2 w-2 rounded-full"></span>
             全部服务正常
           </button>
           <button
-            class="inline-flex h-9 w-9 items-center justify-center rounded-md border transition"
-            :class="isDark ? 'border-white/15 bg-white/5 text-neutral-300 hover:text-white' : 'border-neutral-300 bg-white/70 text-neutral-500 hover:text-neutral-900'"
+            class="home-icon-button inline-flex h-9 w-9 items-center justify-center rounded-md border transition"
             type="button"
             :aria-label="isDark ? '切换亮色模式' : '切换暗色模式'"
             @click="toggleTheme"
@@ -57,23 +55,20 @@
           <router-link
             v-if="isAuthenticated"
             :to="dashboardPath"
-            class="hidden h-9 items-center rounded-md px-3 text-[14px] font-medium transition sm:inline-flex"
-            :class="isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-600 hover:text-neutral-950'"
+            class="home-header-link hidden h-9 items-center rounded-md px-3 font-medium transition sm:inline-flex"
           >
             控制台
           </router-link>
           <router-link
             v-else
             to="/login"
-            class="hidden h-9 items-center rounded-md px-3 text-[14px] font-medium transition sm:inline-flex"
-            :class="isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-600 hover:text-neutral-950'"
+            class="home-header-link hidden h-9 items-center rounded-md px-3 font-medium transition sm:inline-flex"
           >
             登录
           </router-link>
           <router-link
             :to="isAuthenticated ? dashboardPath : '/login'"
-            class="inline-flex h-10 items-center gap-1.5 rounded-md px-4 text-[14px] font-medium shadow-md transition"
-            :class="isDark ? 'bg-white text-neutral-950 shadow-white/10 hover:bg-neutral-200' : 'bg-neutral-950 text-white shadow-neutral-950/20 hover:bg-neutral-800'"
+            class="home-button home-button-primary inline-flex h-10 items-center gap-1.5 rounded-md px-4 font-medium shadow-md transition"
           >
             开始接入
             <Icon name="arrowRight" size="sm" :stroke-width="2.2" />
@@ -85,27 +80,26 @@
     <main>
       <section class="mx-auto grid max-w-[1780px] gap-10 px-5 pb-7 pt-5 sm:px-8 lg:grid-cols-[0.92fr_1.58fr] lg:items-start lg:gap-12 lg:pb-8 lg:pt-5">
         <div class="hero-copy">
-          <div class="mb-6 inline-flex max-w-full items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium" :class="isDark ? 'border-white/20 bg-white/5 text-neutral-300' : 'border-neutral-300 bg-white text-neutral-600'">
-            <span class="flex h-4 w-4 items-center justify-center rounded" :class="isDark ? 'bg-white text-neutral-950' : 'bg-neutral-950 text-white'">
+          <div class="home-eyebrow mb-6 inline-flex max-w-full items-center gap-2 rounded-md border px-3 py-1.5 font-medium">
+            <span class="home-eyebrow-icon flex h-4 w-4 items-center justify-center rounded">
               <Icon name="shield" size="xs" :stroke-width="2.2" />
             </span>
             <span class="truncate">专为出海业务打造的全球路由中转平台</span>
           </div>
 
-          <h1 class="max-w-[580px] text-[clamp(32px,3.6vw,52px)] font-extrabold leading-[1.15] tracking-tight" :class="isDark ? 'text-white' : 'text-neutral-950'">
+          <h1 class="home-title max-w-[580px] font-extrabold tracking-tight">
             面向出海业务的
             <span class="block">{{ siteName }}</span>
           </h1>
 
-          <p class="mt-5 max-w-[540px] text-[15px] leading-7 sm:text-[16px]" :class="isDark ? 'text-neutral-400' : 'text-neutral-500'">
+          <p class="home-body mt-5 max-w-[540px]">
             面向出海业务的全球路由中转平台，低延迟转发，Token 安全隔离，智能路由与故障自动切换，全链路状态监控，助力业务稳定出海。
           </p>
 
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <router-link
               :to="isAuthenticated ? dashboardPath : '/login'"
-              class="inline-flex h-12 items-center justify-center gap-3 rounded-md px-7 text-[15px] font-semibold shadow-lg transition hover:-translate-y-0.5"
-              :class="isDark ? 'bg-white text-neutral-950 shadow-white/10 hover:bg-neutral-200' : 'bg-neutral-950 text-white shadow-neutral-950/20 hover:bg-neutral-800'"
+              class="home-button home-button-primary home-button-lg inline-flex h-12 items-center justify-center gap-3 rounded-md px-7 font-semibold shadow-lg transition hover:-translate-y-0.5"
             >
               开始接入
               <Icon name="arrowRight" size="sm" :stroke-width="2.4" />
@@ -114,17 +108,16 @@
               :href="docHref"
               :target="docUrl ? '_blank' : undefined"
               :rel="docUrl ? 'noopener noreferrer' : undefined"
-              class="inline-flex h-12 items-center justify-center gap-2 rounded-md border px-7 text-[15px] font-semibold shadow-sm transition hover:-translate-y-0.5"
-              :class="isDark ? 'border-white/20 bg-transparent text-white hover:bg-white/10' : 'border-neutral-400 bg-white text-neutral-700 hover:bg-neutral-100'"
+              class="home-button home-button-secondary home-button-lg inline-flex h-12 items-center justify-center gap-2 rounded-md border px-7 font-semibold shadow-sm transition hover:-translate-y-0.5"
             >
               <Icon name="document" size="sm" :stroke-width="2" />
               查看文档
             </a>
           </div>
 
-          <div class="mt-8 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium" :class="isDark ? 'text-neutral-400' : 'text-neutral-500'">
+          <div class="home-proof-list mt-8 flex flex-wrap gap-x-4 gap-y-2 font-medium">
             <span v-for="item in proofItems" :key="item" class="inline-flex items-center gap-1.5">
-              <Icon name="checkCircle" size="xs" :class="isDark ? 'text-white' : 'text-neutral-950'" :stroke-width="2" />
+              <Icon name="checkCircle" size="xs" class="home-check-icon" :stroke-width="2" />
               {{ item }}
             </span>
           </div>
@@ -137,18 +130,18 @@
         </div>
       </section>
 
-      <section id="features" class="border-y" :class="isDark ? 'border-white/10 bg-neutral-900/60' : 'border-neutral-200 bg-white/72'">
-        <div class="mx-auto grid max-w-[1780px] px-5 sm:px-8 md:grid-cols-2 xl:grid-cols-4" :class="isDark ? 'divide-y divide-white/10 md:divide-x md:divide-y-0' : 'divide-y divide-neutral-200 md:divide-x md:divide-y-0'">
+      <section id="features" class="home-feature-section border-y">
+        <div class="home-feature-grid mx-auto grid max-w-[1780px] px-5 sm:px-8 md:grid-cols-2 xl:grid-cols-4">
           <article v-for="feature in features" :key="feature.title" class="feature-item py-7 md:px-8">
             <div class="feature-icon">
               <Icon :name="feature.icon" size="lg" :stroke-width="1.85" />
             </div>
             <div>
-              <h2 class="text-[16px] font-bold" :class="isDark ? 'text-white' : 'text-neutral-950'">{{ feature.title }}</h2>
-              <p class="mt-2 max-w-[380px] text-[13px] leading-6" :class="isDark ? 'text-neutral-400' : 'text-neutral-500'">
+              <h2 class="home-feature-title font-bold">{{ feature.title }}</h2>
+              <p class="home-feature-copy mt-2 max-w-[380px]">
                 {{ feature.description }}
               </p>
-              <a href="#support" class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold" :class="isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-600 hover:text-neutral-950'">
+              <a href="#support" class="home-feature-link mt-4 inline-flex items-center gap-1.5 font-semibold">
                 了解更多
                 <Icon name="arrowRight" size="xs" :stroke-width="2.4" />
               </a>
@@ -157,9 +150,9 @@
         </div>
       </section>
 
-      <section id="trust" class="px-5 py-6 sm:px-8" :class="isDark ? 'bg-neutral-950' : 'bg-neutral-100'">
+      <section id="trust" class="home-trust-section px-5 py-6 sm:px-8">
         <div class="mx-auto max-w-[1260px] text-center">
-          <h2 class="text-lg font-bold tracking-tight" :class="isDark ? 'text-white' : 'text-neutral-950'">被开发者信任的基础设施</h2>
+          <h2 class="home-section-title font-bold tracking-tight">被开发者信任的基础设施</h2>
           <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <div v-for="item in trustItems" :key="item" class="trust-pill">
               <Icon name="check" size="sm" :stroke-width="2.4" />
@@ -169,18 +162,17 @@
         </div>
       </section>
 
-      <section id="support" class="px-5 py-8 sm:px-8" :class="isDark ? 'bg-neutral-950' : 'bg-white'">
-        <div class="mx-auto flex max-w-[1180px] flex-col items-start justify-between gap-5 rounded-md border px-5 py-6 md:flex-row md:items-center" :class="isDark ? 'border-white/15 bg-white/5' : 'border-neutral-200 bg-neutral-50'">
+      <section id="support" class="home-support-section px-5 py-8 sm:px-8">
+        <div class="home-support-card mx-auto flex max-w-[1180px] flex-col items-start justify-between gap-5 rounded-md border px-5 py-6 md:flex-row md:items-center">
           <div>
-            <h2 class="text-lg font-bold" :class="isDark ? 'text-white' : 'text-neutral-950'">用一条稳定 API 管住多模型、多账号、多地区流量</h2>
-            <p class="mt-1.5 text-sm leading-6" :class="isDark ? 'text-neutral-400' : 'text-neutral-500'">
+            <h2 class="home-section-title font-bold">用一条稳定 API 管住多模型、多账号、多地区流量</h2>
+            <p class="home-support-copy mt-1.5">
               适合需要海外模型接入、账号池治理、费用控制和高可用转发的团队先行用户测试。
             </p>
           </div>
           <router-link
             :to="isAuthenticated ? dashboardPath : '/login'"
-            class="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md px-5 text-sm font-semibold transition"
-            :class="isDark ? 'bg-white text-neutral-950 hover:bg-neutral-200' : 'bg-neutral-950 text-white hover:bg-neutral-800'"
+            class="home-button home-button-primary home-button-compact inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md px-5 font-semibold transition"
           >
             进入控制台
             <Icon name="arrowRight" size="sm" :stroke-width="2.2" />
@@ -194,6 +186,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useAuthStore, useAppStore } from '@/stores'
+import { normalizeDisplaySiteName } from '@/stores/app'
 import Icon from '@/components/icons/Icon.vue'
 import GlobeScene from '@/components/home/GlobeScene.vue'
 
@@ -219,7 +212,7 @@ function toggleTheme() {
   localStorage.setItem('landing-theme', isDark.value ? 'dark' : 'light')
 }
 
-const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'AI API Studio')
+const siteName = computed(() => normalizeDisplaySiteName(appStore.siteName))
 const docUrl = computed(() => appStore.cachedPublicSettings?.doc_url || appStore.docUrl || '')
 const docHref = computed(() => docUrl.value || '#features')
 const homeContent = computed(() => appStore.cachedPublicSettings?.home_content || '')
@@ -271,27 +264,317 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ===== Dark theme ===== */
-.landing-page.is-dark {
+/*
+ * /home page design spec
+ * Theme color: #3E55E9. Keep page-only typography, color, radius,
+ * shadow, and interaction tokens here before adding one-off styles below.
+ */
+.landing-page {
+  --home-brand: #3e55e9;
+  --home-brand-hover: #2f43c9;
+  --home-brand-strong: #2438b8;
+  --home-brand-mid: #667dff;
+  --home-brand-label: #8ea0ff;
+  --home-brand-label-hover: #aab7ff;
+  --home-brand-ink: #e9ecff;
+  --home-brand-soft: #f3f5ff;
+  --home-brand-border: #c8d1ff;
+  --home-brand-divider: #dde4ff;
+  --home-cyan: #38bdf8;
+  --home-radius-control: 6px;
+  --home-type-brand: 18px;
+  --home-type-brand-wide: 20px;
+  --home-type-nav: 14px;
+  --home-type-eyebrow: 12px;
+  --home-type-hero: clamp(32px, 3.6vw, 52px);
+  --home-leading-hero: 1.15;
+  --home-type-body: 15px;
+  --home-type-body-wide: 16px;
+  --home-leading-body: 28px;
+  --home-type-button: 14px;
+  --home-type-button-lg: 15px;
+  --home-type-section-title: 18px;
+  --home-type-feature-title: 16px;
+  --home-type-caption: 13px;
+  --home-type-micro: 12px;
+  --home-motion-fast: 160ms ease;
+  --home-motion-standard: 180ms ease;
+  min-height: 100vh;
+  color: var(--home-text-strong);
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 1) 0%, rgba(23, 23, 23, 0.95) 48%, rgba(10, 10, 10, 1) 100%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: auto, 72px 72px, 72px 72px;
+    linear-gradient(180deg, var(--home-page-bg-start) 0%, var(--home-page-bg-mid) 48%, var(--home-page-bg-end) 100%),
+    linear-gradient(126deg, var(--home-page-glow-brand) 0%, transparent 36%, var(--home-page-glow-cyan) 78%, transparent 100%);
+  background-size: auto, auto;
 }
 
-/* ===== Light theme ===== */
+.landing-page.is-dark {
+  --home-page-bg-start: rgba(2, 6, 23, 1);
+  --home-page-bg-mid: rgba(12, 18, 54, 0.98);
+  --home-page-bg-end: rgba(2, 6, 23, 1);
+  --home-page-glow-brand: rgba(62, 85, 233, 0.2);
+  --home-page-glow-cyan: rgba(14, 165, 233, 0.1);
+  --home-text-strong: #f8faff;
+  --home-text-body: #aeb6d2;
+  --home-text-muted: #c6ccdc;
+  --home-text-soft: #9099b5;
+  --home-header-bg: rgba(2, 6, 23, 0.92);
+  --home-header-border: rgba(142, 160, 255, 0.2);
+  --home-control-bg: rgba(255, 255, 255, 0.05);
+  --home-control-border: rgba(255, 255, 255, 0.15);
+  --home-control-text: #c6ccdc;
+  --home-control-hover: #f8faff;
+  --home-accent: var(--home-brand-label);
+  --home-accent-hover: var(--home-brand-ink);
+  --home-accent-contrast: #0f172a;
+  --home-accent-text: var(--home-brand-ink);
+  --home-accent-surface: rgba(62, 85, 233, 0.1);
+  --home-accent-surface-hover: rgba(62, 85, 233, 0.2);
+  --home-accent-border: rgba(142, 160, 255, 0.25);
+  --home-button-primary-bg: var(--home-brand-label);
+  --home-button-primary-text: #0f172a;
+  --home-button-primary-hover: var(--home-brand-label-hover);
+  --home-button-primary-shadow: 0 12px 28px rgba(62, 85, 233, 0.35);
+  --home-button-secondary-bg: rgba(62, 85, 233, 0.1);
+  --home-button-secondary-border: rgba(142, 160, 255, 0.3);
+  --home-button-secondary-text: var(--home-brand-soft);
+  --home-button-secondary-hover: rgba(62, 85, 233, 0.2);
+  --home-feature-bg: rgba(15, 23, 42, 0.7);
+  --home-feature-border: rgba(142, 160, 255, 0.15);
+  --home-trust-bg: #020617;
+  --home-support-bg: #020617;
+  --home-support-card-bg: rgba(62, 85, 233, 0.1);
+  --home-pill-text: var(--home-brand-ink);
+  --home-pill-bg: rgba(62, 85, 233, 0.1);
+  --home-pill-border: rgba(142, 160, 255, 0.24);
+  --home-brand-mark-bg: linear-gradient(135deg, var(--home-brand-label) 0%, var(--home-brand) 100%);
+  --home-brand-mark-shadow: 0 0 24px rgba(62, 85, 233, 0.38);
+  --home-brand-mark-cutout: #10133f;
+  --home-status-dot-shadow: 0 0 12px rgba(62, 85, 233, 0.75);
+  --home-globe-glow:
+    radial-gradient(circle at 36% 28%, rgba(62, 85, 233, 0.22), transparent 44%),
+    radial-gradient(circle at 74% 54%, rgba(14, 165, 233, 0.12), transparent 50%);
+  --home-globe-glow-opacity: 0.62;
+}
+
 .landing-page.is-light {
-  background:
-    linear-gradient(180deg, rgba(250, 250, 250, 1) 0%, rgba(245, 245, 245, 0.95) 48%, rgba(250, 250, 250, 1) 100%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-  background-size: auto, 72px 72px, 72px 72px;
+  --home-page-bg-start: rgba(243, 245, 255, 1);
+  --home-page-bg-mid: rgba(248, 250, 252, 0.96);
+  --home-page-bg-end: rgba(255, 255, 255, 1);
+  --home-page-glow-brand: rgba(62, 85, 233, 0.11);
+  --home-page-glow-cyan: rgba(56, 189, 248, 0.07);
+  --home-text-strong: #15172b;
+  --home-text-body: #596074;
+  --home-text-muted: #5f6678;
+  --home-text-soft: #737b8f;
+  --home-header-bg: rgba(243, 245, 255, 0.9);
+  --home-header-border: rgba(62, 85, 233, 0.2);
+  --home-control-bg: rgba(255, 255, 255, 0.7);
+  --home-control-border: #d6d9e4;
+  --home-control-text: #6b7280;
+  --home-control-hover: #15172b;
+  --home-accent: var(--home-brand);
+  --home-accent-hover: var(--home-brand-strong);
+  --home-accent-contrast: #f8faff;
+  --home-accent-text: var(--home-brand-strong);
+  --home-accent-surface: rgba(255, 255, 255, 0.8);
+  --home-accent-surface-hover: var(--home-brand-soft);
+  --home-accent-border: var(--home-brand-border);
+  --home-button-primary-bg: var(--home-brand);
+  --home-button-primary-text: #f8faff;
+  --home-button-primary-hover: var(--home-brand-hover);
+  --home-button-primary-shadow: 0 12px 28px rgba(62, 85, 233, 0.25);
+  --home-button-secondary-bg: #ffffff;
+  --home-button-secondary-border: var(--home-brand-border);
+  --home-button-secondary-text: var(--home-brand-strong);
+  --home-button-secondary-hover: var(--home-brand-soft);
+  --home-feature-bg: rgba(255, 255, 255, 0.8);
+  --home-feature-border: var(--home-brand-divider);
+  --home-trust-bg: rgba(243, 245, 255, 0.7);
+  --home-support-bg: #ffffff;
+  --home-support-card-bg: rgba(243, 245, 255, 0.75);
+  --home-pill-text: var(--home-brand-strong);
+  --home-pill-bg: rgba(255, 255, 255, 0.86);
+  --home-pill-border: rgba(200, 209, 255, 0.95);
+  --home-brand-mark-bg: linear-gradient(135deg, var(--home-brand-mid) 0%, var(--home-brand) 100%);
+  --home-brand-mark-shadow: 0 8px 20px rgba(62, 85, 233, 0.24);
+  --home-brand-mark-cutout: var(--home-brand-soft);
+  --home-status-dot-shadow: 0 0 12px rgba(62, 85, 233, 0.75);
+  --home-globe-glow:
+    radial-gradient(circle at 38% 30%, rgba(62, 85, 233, 0.11), transparent 42%),
+    radial-gradient(circle at 72% 52%, rgba(56, 189, 248, 0.07), transparent 48%);
+  --home-globe-glow-opacity: 0.74;
+}
+
+.home-header {
+  background: var(--home-header-bg);
+  border-color: var(--home-header-border);
+}
+
+.home-brand-name {
+  font-size: var(--home-type-brand);
+  color: var(--home-text-strong);
+}
+
+.home-nav,
+.home-header-link {
+  font-size: var(--home-type-nav);
+  color: var(--home-text-muted);
+}
+
+.home-header-link:hover,
+.nav-link:hover {
+  color: var(--home-control-hover);
+}
+
+.home-status-badge {
+  font-size: var(--home-type-eyebrow);
+  color: var(--home-accent-text);
+  background: var(--home-accent-surface);
+  border-color: var(--home-accent-border);
+}
+
+.home-status-dot {
+  background: var(--home-accent);
+  box-shadow: var(--home-status-dot-shadow);
+}
+
+.home-icon-button {
+  color: var(--home-control-text);
+  background: var(--home-control-bg);
+  border-color: var(--home-control-border);
+  border-radius: var(--home-radius-control);
+}
+
+.home-icon-button:hover {
+  color: var(--home-control-hover);
+}
+
+.home-eyebrow {
+  font-size: var(--home-type-eyebrow);
+  color: var(--home-text-muted);
+  background: var(--home-control-bg);
+  border-color: var(--home-control-border);
+  border-radius: var(--home-radius-control);
+}
+
+.home-eyebrow-icon {
+  color: var(--home-accent-contrast);
+  background: var(--home-accent);
+  border-radius: calc(var(--home-radius-control) - 2px);
+}
+
+.home-title {
+  font-size: var(--home-type-hero);
+  line-height: var(--home-leading-hero);
+  color: var(--home-text-strong);
+}
+
+.home-body {
+  font-size: var(--home-type-body);
+  line-height: var(--home-leading-body);
+  color: var(--home-text-body);
+}
+
+.home-button {
+  font-size: var(--home-type-button);
+  line-height: 1;
+  border-radius: var(--home-radius-control);
+}
+
+.home-button-lg {
+  font-size: var(--home-type-button-lg);
+}
+
+.home-button-primary {
+  color: var(--home-button-primary-text);
+  background: var(--home-button-primary-bg);
+  box-shadow: var(--home-button-primary-shadow);
+}
+
+.home-button-primary:hover {
+  background: var(--home-button-primary-hover);
+}
+
+.home-button-secondary {
+  color: var(--home-button-secondary-text);
+  background: var(--home-button-secondary-bg);
+  border-color: var(--home-button-secondary-border);
+}
+
+.home-button-secondary:hover {
+  background: var(--home-button-secondary-hover);
+}
+
+.home-proof-list {
+  font-size: var(--home-type-eyebrow);
+  color: var(--home-text-soft);
+}
+
+.home-check-icon {
+  color: var(--home-accent);
+}
+
+.home-feature-section {
+  background: var(--home-feature-bg);
+  border-color: var(--home-feature-border);
+}
+
+.home-feature-grid > .feature-item + .feature-item {
+  border-top: 1px solid var(--home-feature-border);
+}
+
+.home-feature-grid > .feature-item {
+  border-left: 0;
+}
+
+.home-feature-title {
+  font-size: var(--home-type-feature-title);
+  color: var(--home-text-strong);
+}
+
+.home-feature-copy {
+  font-size: var(--home-type-caption);
+  line-height: 24px;
+  color: var(--home-text-body);
+}
+
+.home-feature-link {
+  font-size: var(--home-type-eyebrow);
+  color: var(--home-accent);
+}
+
+.home-feature-link:hover {
+  color: var(--home-accent-hover);
+}
+
+.home-trust-section {
+  background: var(--home-trust-bg);
+}
+
+.home-section-title {
+  font-size: var(--home-type-section-title);
+  color: var(--home-text-strong);
+}
+
+.home-support-section {
+  background: var(--home-support-bg);
+}
+
+.home-support-card {
+  background: var(--home-support-card-bg);
+  border-color: var(--home-accent-border);
+  border-radius: var(--home-radius-control);
+}
+
+.home-support-copy {
+  font-size: var(--home-type-nav);
+  line-height: 24px;
+  color: var(--home-text-body);
 }
 
 .nav-link {
   position: relative;
-  transition: color 160ms ease;
+  transition: color var(--home-motion-fast);
 }
 
 .nav-link::after {
@@ -304,15 +587,11 @@ onMounted(() => {
   opacity: 0;
   transform: scaleX(0.72);
   transition:
-    opacity 160ms ease,
-    transform 160ms ease;
+    opacity var(--home-motion-fast),
+    transform var(--home-motion-fast);
 }
 
-.is-dark .nav-link::after { background: #fff; }
-.is-light .nav-link::after { background: #0a0a0a; }
-
-.is-dark .nav-link:hover { color: #fff; }
-.is-light .nav-link:hover { color: #0a0a0a; }
+.nav-link::after { background: var(--home-accent); }
 
 .nav-link:hover::after {
   opacity: 1;
@@ -320,24 +599,11 @@ onMounted(() => {
 }
 
 .brand-mark {
-  display: grid;
   width: 30px;
   height: 30px;
-  place-items: center;
-  clip-path: polygon(50% 0, 92% 25%, 92% 75%, 50% 100%, 8% 75%, 8% 25%);
-}
-
-.is-dark .brand-mark { background: #fff; }
-.is-dark .brand-mark span { border-color: #0a0a0a; }
-.is-light .brand-mark { background: #0a0a0a; }
-.is-light .brand-mark span { border-color: #fafafa; }
-
-.brand-mark span {
-  width: 18px;
-  height: 14px;
-  border-width: 5px;
-  border-style: solid;
-  transform: rotate(45deg) skew(-10deg, -10deg);
+  overflow: hidden;
+  border-radius: var(--home-radius-control);
+  box-shadow: var(--home-brand-mark-shadow);
 }
 
 .hero-copy {
@@ -355,6 +621,18 @@ onMounted(() => {
   transform: translateZ(0);
 }
 
+.globe-container::before {
+  position: absolute;
+  inset: -18% -12% -14%;
+  content: '';
+  background: var(--home-globe-glow);
+  filter: blur(42px);
+  opacity: var(--home-globe-glow-opacity);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0%, #000 42%, transparent 74%);
+  mask-image: radial-gradient(circle at center, #000 0%, #000 42%, transparent 74%);
+  pointer-events: none;
+}
+
 .feature-item {
   display: flex;
   gap: 20px;
@@ -367,10 +645,10 @@ onMounted(() => {
   align-items: flex-start;
   justify-content: center;
   width: 56px;
+  padding-top: 2px;
 }
 
-.is-dark .feature-icon { color: #fff; }
-.is-light .feature-icon { color: #0a0a0a; }
+.feature-icon { color: var(--home-accent); }
 
 .trust-pill {
   display: inline-flex;
@@ -379,25 +657,51 @@ onMounted(() => {
   justify-content: center;
   gap: 8px;
   padding: 8px 12px;
-  font-size: 13px;
-  border-radius: 6px;
+  font-size: var(--home-type-caption);
+  color: var(--home-pill-text);
+  background: var(--home-pill-bg);
+  border: 1px solid var(--home-pill-border);
+  border-radius: var(--home-radius-control);
 }
 
-.is-dark .trust-pill {
-  color: #d4d4d4;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.trust-pill svg {
+  color: var(--home-accent);
 }
 
-.is-dark .trust-pill svg { color: #fff; }
+@media (min-width: 640px) {
+  .home-brand-name {
+    font-size: var(--home-type-brand-wide);
+  }
 
-.is-light .trust-pill {
-  color: #525252;
-  background: #fff;
-  border: 1px solid #d4d4d4;
+  .home-body {
+    font-size: var(--home-type-body-wide);
+  }
 }
 
-.is-light .trust-pill svg { color: #0a0a0a; }
+@media (min-width: 768px) {
+  .home-feature-grid > .feature-item:nth-child(n) {
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .home-feature-grid > .feature-item:nth-child(even) {
+    border-left: 1px solid var(--home-feature-border);
+  }
+
+  .home-feature-grid > .feature-item:nth-child(n + 3) {
+    border-top: 1px solid var(--home-feature-border);
+  }
+}
+
+@media (min-width: 1280px) {
+  .home-feature-grid > .feature-item:nth-child(n) {
+    border-top: 0;
+  }
+
+  .home-feature-grid > .feature-item + .feature-item {
+    border-left: 1px solid var(--home-feature-border);
+  }
+}
 
 @media (max-width: 760px) {
   .globe-container {
@@ -415,10 +719,6 @@ onMounted(() => {
 }
 
 @media (max-width: 560px) {
-  .earth-panel {
-    min-height: 650px;
-  }
-
   .globe-container {
     min-height: 300px;
   }

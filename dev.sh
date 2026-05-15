@@ -5,13 +5,15 @@
 set -e
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-POSTGRES_PORT=5432
+POSTGRES_PORT=15432
 REDIS_PORT=6379
 POSTGRES_USER=sub2api
 POSTGRES_PASSWORD=sub2api_dev
 POSTGRES_DB=sub2api
 BACKEND_PORT=8080
 FRONTEND_PORT=5173
+
+export GOPROXY="${GOPROXY:-https://goproxy.cn,direct}"
 
 # 颜色
 RED='\033[0;31m'
@@ -137,6 +139,8 @@ echo -e "${GREEN}  Ctrl+C 停止前后端${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
-# 等待任一进程退出
-wait -n $BACKEND_PID $FRONTEND_PID 2>/dev/null
+# 等待任一进程退出。macOS 自带 Bash 3.2 不支持 wait -n。
+while kill -0 "$BACKEND_PID" 2>/dev/null && kill -0 "$FRONTEND_PID" 2>/dev/null; do
+    sleep 1
+done
 cleanup

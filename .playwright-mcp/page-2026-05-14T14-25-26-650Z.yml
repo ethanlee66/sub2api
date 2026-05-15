@@ -1,0 +1,189 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e36]:
+    - complementary [ref=e37]:
+      - generic [ref=e38]:
+        - img "Logo" [ref=e40]
+        - generic [ref=e41]:
+          - generic [ref=e42]: Sub2API
+          - generic [ref=e43]: v0.1.126
+      - navigation [ref=e44]:
+        - generic [ref=e45]:
+          - link "仪表盘" [ref=e46] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e47]
+            - generic [ref=e49]: 仪表盘
+          - link "API 密钥" [ref=e50] [cursor=pointer]:
+            - /url: /keys
+            - img [ref=e51]
+            - generic [ref=e53]: API 密钥
+          - link "使用记录" [ref=e54] [cursor=pointer]:
+            - /url: /usage
+            - img [ref=e55]
+            - generic [ref=e57]: 使用记录
+          - link "渠道状态" [ref=e58] [cursor=pointer]:
+            - /url: /monitor
+            - img [ref=e59]
+            - generic [ref=e61]: 渠道状态
+          - link "我的订阅" [ref=e62] [cursor=pointer]:
+            - /url: /subscriptions
+            - img [ref=e63]
+            - generic [ref=e65]: 我的订阅
+          - link "兑换" [ref=e66] [cursor=pointer]:
+            - /url: /redeem
+            - img [ref=e67]
+            - generic [ref=e69]: 兑换
+          - link "个人资料" [ref=e70] [cursor=pointer]:
+            - /url: /profile
+            - img [ref=e71]
+            - generic [ref=e73]: 个人资料
+      - generic [ref=e74]:
+        - button "深色模式" [ref=e75] [cursor=pointer]:
+          - img [ref=e76]
+          - generic [ref=e78]: 深色模式
+        - button "收起" [ref=e79] [cursor=pointer]:
+          - img [ref=e80]
+          - generic [ref=e82]: 收起
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e85]:
+          - generic [ref=e87]:
+            - heading "仪表盘" [level=1] [ref=e88]
+            - paragraph [ref=e89]: 欢迎回来！这是您账户的概览。
+          - generic [ref=e90]:
+            - button "公告" [ref=e92] [cursor=pointer]:
+              - img [ref=e93]
+            - button "🇨🇳 ZH" [ref=e96] [cursor=pointer]:
+              - generic [ref=e97]: 🇨🇳
+              - generic [ref=e98]: ZH
+              - img [ref=e99]
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: $0.00
+            - button "User Menu" [ref=e106] [cursor=pointer]:
+              - generic [ref=e108]: 普通
+              - generic [ref=e109]:
+                - generic [ref=e110]: 普通用户
+                - generic [ref=e111]: user
+              - img [ref=e112]
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e118]:
+              - img [ref=e120]
+              - generic [ref=e122]:
+                - paragraph [ref=e123]: 余额
+                - paragraph [ref=e124]: $0.00
+                - paragraph [ref=e125]: 可用
+            - generic [ref=e127]:
+              - img [ref=e129]
+              - generic [ref=e131]:
+                - paragraph [ref=e132]: API 密钥
+                - paragraph [ref=e133]: "0"
+                - paragraph [ref=e134]: 0 启用
+            - generic [ref=e136]:
+              - img [ref=e138]
+              - generic [ref=e140]:
+                - paragraph [ref=e141]: 今日请求
+                - paragraph [ref=e142]: "0"
+                - paragraph [ref=e143]: "总计: 0"
+            - generic [ref=e145]:
+              - img [ref=e147]
+              - generic [ref=e149]:
+                - paragraph [ref=e150]: 今日消费
+                - paragraph [ref=e151]: $0.0000 / $0.0000
+                - paragraph [ref=e152]: "总计: $0.0000 / $0.0000"
+          - generic [ref=e153]:
+            - generic [ref=e155]:
+              - img [ref=e157]
+              - generic [ref=e159]:
+                - paragraph [ref=e160]: 今日 Token
+                - paragraph [ref=e161]: "0"
+                - paragraph [ref=e162]: "输入: 0 / 输出: 0"
+            - generic [ref=e164]:
+              - img [ref=e166]
+              - generic [ref=e168]:
+                - paragraph [ref=e169]: 累计 Token
+                - paragraph [ref=e170]: "0"
+                - paragraph [ref=e171]: "输入: 0 / 输出: 0"
+            - generic [ref=e173]:
+              - img [ref=e175]
+              - generic [ref=e177]:
+                - paragraph [ref=e178]: 性能指标
+                - generic [ref=e179]:
+                  - paragraph [ref=e180]: "0"
+                  - generic [ref=e181]: RPM
+                - generic [ref=e182]:
+                  - paragraph [ref=e183]: "0"
+                  - generic [ref=e184]: TPM
+            - generic [ref=e186]:
+              - img [ref=e188]
+              - generic [ref=e190]:
+                - paragraph [ref=e191]: 平均响应
+                - paragraph [ref=e192]: 0ms
+                - paragraph [ref=e193]: 平均时间
+          - generic [ref=e194]:
+            - generic [ref=e196]:
+              - generic [ref=e197]:
+                - generic [ref=e198]: "时间范围:"
+                - button "近 7 天" [ref=e200] [cursor=pointer]:
+                  - img [ref=e202]
+                  - generic [ref=e204]: 近 7 天
+                  - img [ref=e206]
+              - button "刷新" [ref=e208] [cursor=pointer]
+              - generic [ref=e209]:
+                - generic [ref=e210]: "粒度:"
+                - button "Select option" [ref=e213] [cursor=pointer]:
+                  - generic [ref=e214]: 按天
+                  - img [ref=e216]
+            - generic [ref=e218]:
+              - generic [ref=e219]:
+                - heading "模型分布" [level=3] [ref=e220]
+                - generic [ref=e221]:
+                  - generic [ref=e223]: 暂无数据
+                  - table [ref=e225]:
+                    - rowgroup [ref=e226]:
+                      - row "模型 请求 Token 实际 标准" [ref=e227]:
+                        - columnheader "模型" [ref=e228]
+                        - columnheader "请求" [ref=e229]
+                        - columnheader "Token" [ref=e230]
+                        - columnheader "实际" [ref=e231]
+                        - columnheader "标准" [ref=e232]
+                    - rowgroup
+              - generic [ref=e233]:
+                - heading "Token 使用趋势" [level=3] [ref=e234]
+                - generic [ref=e235]: 暂无数据
+          - generic [ref=e236]:
+            - generic [ref=e238]:
+              - generic [ref=e239]:
+                - heading "最近使用" [level=2] [ref=e240]
+                - generic [ref=e241]: 近 7 天
+              - generic [ref=e244]:
+                - img [ref=e246]
+                - heading "暂无使用记录" [level=3] [ref=e248]
+                - paragraph [ref=e249]: 开始使用 API 后，您的使用历史将显示在这里。
+            - generic [ref=e251]:
+              - heading "快捷操作" [level=2] [ref=e253]
+              - generic [ref=e254]:
+                - button "创建 API 密钥 生成新的 API 密钥" [ref=e255] [cursor=pointer]:
+                  - img [ref=e257]
+                  - generic [ref=e259]:
+                    - paragraph [ref=e260]: 创建 API 密钥
+                    - paragraph [ref=e261]: 生成新的 API 密钥
+                  - img [ref=e262]
+                - button "查看使用记录 查看详细的使用日志" [ref=e264] [cursor=pointer]:
+                  - img [ref=e266]
+                  - generic [ref=e268]:
+                    - paragraph [ref=e269]: 查看使用记录
+                    - paragraph [ref=e270]: 查看详细的使用日志
+                  - img [ref=e271]
+                - button "兑换码 使用兑换码充值" [ref=e273] [cursor=pointer]:
+                  - img [ref=e275]
+                  - generic [ref=e277]:
+                    - paragraph [ref=e278]: 兑换码
+                    - paragraph [ref=e279]: 使用兑换码充值
+                  - img [ref=e280]
+  - generic [ref=e284]:
+    - img [ref=e286]
+    - paragraph [ref=e289]: 登录成功！欢迎回来。
+    - button "Close notification" [ref=e290] [cursor=pointer]:
+      - img [ref=e291]

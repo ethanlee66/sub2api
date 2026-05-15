@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="profile-flat-panel">
     <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
       <h2 class="text-lg font-medium text-gray-900 dark:text-white">
         {{ t('profile.totp.title') }}
@@ -152,3 +152,10 @@ onMounted(() => {
   loadStatus()
 })
 </script>
+
+<style scoped>
+.profile-flat-panel {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+</style>

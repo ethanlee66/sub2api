@@ -417,10 +417,15 @@ onUnmounted(() => {
 }
 
 .date-picker-apply {
-  @apply rounded-lg px-4 py-1.5 text-sm font-medium;
-  @apply bg-primary-600 text-white;
-  @apply hover:bg-primary-700;
-  @apply transition-colors duration-150;
+  @apply px-4 py-1.5 text-sm font-medium transition-colors duration-150;
+  border-radius: var(--user-radius-control, 0.5rem);
+  color: var(--user-button-primary-text, #ffffff);
+  background: var(--user-button-primary-bg, #0d9488);
+  box-shadow: var(--user-button-primary-shadow, none);
+}
+
+.date-picker-apply:hover {
+  background: var(--user-button-primary-hover, #0f766e);
 }
 
 /* Dropdown animation */

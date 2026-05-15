@@ -1,33 +1,31 @@
 <template>
   <AppLayout>
-    <div class="mx-auto max-w-2xl space-y-6">
+    <div class="redeem-page">
       <!-- Current Balance Card -->
-      <div class="card overflow-hidden">
-        <div class="bg-gradient-to-br from-primary-500 to-primary-600 px-6 py-8 text-center">
-          <div
-            class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm"
-          >
-            <Icon name="creditCard" size="xl" class="text-white" />
-          </div>
-          <p class="text-sm font-medium text-primary-100">{{ t('redeem.currentBalance') }}</p>
-          <p class="mt-2 text-4xl font-bold text-white">
+      <section class="redeem-hero">
+        <div class="redeem-hero-icon" aria-hidden="true">
+          <Icon name="creditCard" size="xl" />
+        </div>
+        <div>
+          <p class="redeem-kicker">{{ t('redeem.currentBalance') }}</p>
+          <p class="redeem-balance">
             ${{ user?.balance?.toFixed(2) || '0.00' }}
           </p>
-          <p class="mt-2 text-sm text-primary-100">
-            {{ t('redeem.concurrency') }}: {{ user?.concurrency || 0 }} {{ t('redeem.requests') }}
-          </p>
         </div>
-      </div>
+        <p class="redeem-concurrency">
+          {{ t('redeem.concurrency') }}: {{ user?.concurrency || 0 }} {{ t('redeem.requests') }}
+        </p>
+      </section>
 
       <!-- Redeem Form -->
-      <div class="card">
-        <div class="p-6">
-          <form @submit.prevent="handleRedeem" class="space-y-5">
-            <div>
-              <label for="code" class="input-label">
-                {{ t('redeem.redeemCodeLabel') }}
-              </label>
-              <div class="relative mt-1">
+      <section class="redeem-panel redeem-form-panel">
+        <form @submit.prevent="handleRedeem" class="redeem-form">
+          <div class="redeem-input-wrap">
+            <label for="code" class="input-label">
+              {{ t('redeem.redeemCodeLabel') }}
+            </label>
+            <div class="redeem-control-row">
+              <div class="relative min-w-0 flex-1">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                   <Icon name="gift" size="md" class="text-gray-400 dark:text-dark-500" />
                 </div>
@@ -38,51 +36,51 @@
                   required
                   :placeholder="t('redeem.redeemCodePlaceholder')"
                   :disabled="submitting"
-                  class="input py-3 pl-12 text-lg"
+                  class="input redeem-code-input"
                 />
               </div>
-              <p class="input-hint">
-                {{ t('redeem.redeemCodeHint') }}
-              </p>
-            </div>
 
-            <button
-              type="submit"
-              :disabled="!redeemCode || submitting"
-              class="btn btn-primary w-full py-3"
-            >
-              <svg
-                v-if="submitting"
-                class="-ml-1 mr-2 h-5 w-5 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
+              <button
+                type="submit"
+                :disabled="!redeemCode || submitting"
+                class="btn btn-primary redeem-submit"
               >
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              <Icon v-else name="checkCircle" size="md" class="mr-2" />
-              {{ submitting ? t('redeem.redeeming') : t('redeem.redeemButton') }}
-            </button>
-          </form>
-        </div>
-      </div>
+                <svg
+                  v-if="submitting"
+                  class="-ml-1 mr-2 h-5 w-5 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <Icon v-else name="checkCircle" size="md" class="mr-2" />
+                {{ submitting ? t('redeem.redeeming') : t('redeem.redeemButton') }}
+              </button>
+            </div>
+            <p class="input-hint">
+              {{ t('redeem.redeemCodeHint') }}
+            </p>
+          </div>
+        </form>
+      </section>
 
       <!-- Success Message -->
       <transition name="fade">
         <div
           v-if="redeemResult"
-          class="card border-emerald-200 bg-emerald-50 dark:border-emerald-800/50 dark:bg-emerald-900/20"
+          class="redeem-alert redeem-alert-success"
         >
           <div class="p-6">
             <div class="flex items-start gap-4">
@@ -136,7 +134,7 @@
       <transition name="fade">
         <div
           v-if="errorMessage"
-          class="card border-red-200 bg-red-50 dark:border-red-800/50 dark:bg-red-900/20"
+          class="redeem-alert redeem-alert-error"
         >
           <div class="p-6">
             <div class="flex items-start gap-4">
@@ -163,10 +161,8 @@
       </transition>
 
       <!-- Information Card -->
-      <div
-        class="card border-primary-200 bg-primary-50 dark:border-primary-800/50 dark:bg-primary-900/20"
-      >
-        <div class="p-6">
+      <section class="redeem-info">
+        <div>
           <div class="flex items-start gap-4">
             <div
               class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30"
@@ -196,16 +192,16 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Recent Activity -->
-      <div class="card">
-        <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+      <section class="redeem-history">
+        <div class="redeem-section-heading">
+          <h2>
             {{ t('redeem.recentActivity') }}
           </h2>
         </div>
-        <div class="p-6">
+        <div>
           <!-- Loading State -->
           <div v-if="loadingHistory" class="flex items-center justify-center py-8">
             <svg class="h-6 w-6 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
@@ -226,16 +222,16 @@
           </div>
 
           <!-- History List -->
-          <div v-else-if="history.length > 0" class="space-y-3">
+          <div v-else-if="history.length > 0" class="redeem-history-list">
             <div
               v-for="item in history"
               :key="item.id"
-              class="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-dark-800"
+              class="redeem-history-row"
             >
               <div class="flex items-center gap-4">
                 <div
                   :class="[
-                    'flex h-10 w-10 items-center justify-center rounded-xl',
+                    'redeem-history-icon',
                     isBalanceType(item.type)
                       ? item.value >= 0
                         ? 'bg-emerald-100 dark:bg-emerald-900/30'
@@ -326,9 +322,7 @@
 
           <!-- Empty State -->
           <div v-else class="empty-state py-8">
-            <div
-              class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 dark:bg-dark-800"
-            >
+            <div class="redeem-empty-icon">
               <Icon name="clock" size="xl" class="text-gray-400 dark:text-dark-500" />
             </div>
             <p class="text-sm text-gray-500 dark:text-dark-400">
@@ -336,7 +330,7 @@
             </p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   </AppLayout>
 </template>
@@ -488,6 +482,151 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.redeem-page {
+  display: flex;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.redeem-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0 24px;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.redeem-hero-icon,
+.redeem-history-icon,
+.redeem-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.redeem-hero-icon {
+  width: 46px;
+  height: 46px;
+  color: var(--user-sidebar-active-text, #2438b8);
+  background: var(--user-sidebar-active-bg, rgba(62, 85, 233, 0.1));
+}
+
+.redeem-kicker {
+  color: var(--user-text-soft, #737b8f);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.redeem-balance {
+  margin-top: 2px;
+  color: var(--user-text-strong, #15172b);
+  font-size: 30px;
+  font-weight: 740;
+  line-height: 1.1;
+}
+
+.redeem-concurrency {
+  color: var(--user-text-muted, #5f6678);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.redeem-panel,
+.redeem-info,
+.redeem-history {
+  padding: 0 0 24px;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.redeem-form {
+  display: block;
+}
+
+.redeem-control-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.redeem-code-input {
+  min-height: 46px;
+  padding: 11px 16px 11px 48px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.redeem-submit {
+  min-height: 46px;
+  padding-inline: 20px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.redeem-alert {
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.redeem-alert-success {
+  background: rgba(236, 253, 245, 0.72);
+  border-color: rgba(16, 185, 129, 0.24);
+}
+
+.redeem-alert-error {
+  background: rgba(254, 242, 242, 0.74);
+  border-color: rgba(239, 68, 68, 0.24);
+}
+
+.redeem-info {
+  color: var(--user-sidebar-active-text, #2438b8);
+}
+
+.redeem-info ul {
+  color: var(--user-text-muted, #5f6678);
+}
+
+.redeem-section-heading {
+  margin-bottom: 14px;
+}
+
+.redeem-section-heading h2 {
+  color: var(--user-text-strong, #15172b);
+  font-size: 15px;
+  font-weight: 720;
+}
+
+.redeem-history-list {
+  border-top: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.redeem-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 74px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.redeem-history-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.redeem-empty-icon {
+  width: 54px;
+  height: 54px;
+  margin-bottom: 16px;
+  background: var(--user-panel-bg-muted, rgba(243, 245, 255, 0.66));
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.3s ease;
@@ -497,5 +636,29 @@ onMounted(async () => {
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+@media (max-width: 639px) {
+  .redeem-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .redeem-control-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .redeem-concurrency {
+    justify-self: start;
+  }
+
+  .redeem-submit {
+    width: 100%;
+  }
+
+  .redeem-history-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 </style>

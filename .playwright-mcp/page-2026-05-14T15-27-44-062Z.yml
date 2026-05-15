@@ -1,0 +1,69 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e7]
+      - generic [ref=e8]:
+        - generic [ref=e9]: Sub2API
+        - generic [ref=e10]: v0.1.126
+    - navigation [ref=e11]:
+      - generic [ref=e12]:
+        - link "仪表盘" [ref=e13] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e14]
+          - generic [ref=e16]: 仪表盘
+        - link "API 密钥" [ref=e17] [cursor=pointer]:
+          - /url: /keys
+          - img [ref=e18]
+          - generic [ref=e20]: API 密钥
+        - link "使用记录" [ref=e21] [cursor=pointer]:
+          - /url: /usage
+          - img [ref=e22]
+          - generic [ref=e24]: 使用记录
+        - link "渠道状态" [ref=e25] [cursor=pointer]:
+          - /url: /monitor
+          - img [ref=e26]
+          - generic [ref=e28]: 渠道状态
+        - link "我的订阅" [ref=e29] [cursor=pointer]:
+          - /url: /subscriptions
+          - img [ref=e30]
+          - generic [ref=e32]: 我的订阅
+        - link "兑换" [ref=e33] [cursor=pointer]:
+          - /url: /redeem
+          - img [ref=e34]
+          - generic [ref=e36]: 兑换
+        - link "个人资料" [ref=e37] [cursor=pointer]:
+          - /url: /profile
+          - img [ref=e38]
+          - generic [ref=e40]: 个人资料
+    - generic [ref=e41]:
+      - button "深色模式" [ref=e42] [cursor=pointer]:
+        - img [ref=e43]
+        - generic [ref=e45]: 深色模式
+      - button "收起" [ref=e46] [cursor=pointer]:
+        - img [ref=e47]
+        - generic [ref=e49]: 收起
+  - generic [ref=e50]:
+    - banner [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e54]:
+          - heading "仪表盘" [level=1] [ref=e55]
+          - paragraph [ref=e56]: 欢迎回来！这是您账户的概览。
+        - generic [ref=e57]:
+          - button "公告" [ref=e59] [cursor=pointer]:
+            - img [ref=e60]
+          - button "🇨🇳 ZH" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]: 🇨🇳
+            - generic [ref=e65]: ZH
+            - img [ref=e66]
+          - generic [ref=e68]:
+            - img [ref=e69]
+            - generic [ref=e71]: $0.00
+          - button "User Menu" [ref=e73] [cursor=pointer]:
+            - generic [ref=e75]: 普通
+            - generic [ref=e76]:
+              - generic [ref=e77]: 普通用户
+              - generic [ref=e78]: user
+            - img [ref=e79]
+    - main [ref=e81]:
+      - status "加载中..." [ref=e84]:
+        - generic [ref=e85]: 加载中...

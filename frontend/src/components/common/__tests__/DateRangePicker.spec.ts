@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { ref } from 'vue'
 
 import DateRangePicker from '../DateRangePicker.vue'
+
+const readSource = (path: string) => readFileSync(resolve(__dirname, '..', path), 'utf8')
 
 const messages: Record<string, string> = {
   'dates.today': 'Today',
@@ -34,6 +39,16 @@ const formatLocalDate = (date: Date): string => {
 }
 
 describe('DateRangePicker', () => {
+  it('uses shell theme variables for the apply action color', () => {
+    const source = readSource('DateRangePicker.vue')
+    const applyStyle = source.match(/\.date-picker-apply\s*\{[\s\S]*?\.date-picker-apply:hover\s*\{[\s\S]*?\n\}/)?.[0] ?? ''
+
+    expect(applyStyle).toContain('--user-button-primary-bg')
+    expect(applyStyle).toContain('--user-button-primary-hover')
+    expect(applyStyle).not.toContain('bg-primary-600')
+    expect(applyStyle).not.toContain('hover:bg-primary-700')
+  })
+
   it('uses last 24 hours as the default recognized preset', () => {
     const now = new Date()
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)

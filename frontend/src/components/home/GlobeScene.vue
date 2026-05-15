@@ -23,6 +23,7 @@ import {
   DEFAULT_GLOBE_ROTATION,
   HUB_POINT,
   applyGlobeDragRotation,
+  getGlobeThemeColors,
   latLngToVector3,
   type GeoPoint,
   type GlobeRotation
@@ -92,46 +93,7 @@ function setLabelRef(id: string, element: Element | ComponentPublicInstance | nu
 }
 
 function getThemeColors() {
-  if (props.dark) {
-    return {
-      ocean: ['#f8f8f8', '#ececec', '#d7d7d7'],
-      shallow: 'rgba(255, 255, 255, 0.44)',
-      land: 'rgba(178, 178, 178, 0.76)',
-      highland: 'rgba(116, 116, 116, 0.3)',
-      ice: 'rgba(255, 255, 255, 0.76)',
-      clouds: 'rgba(255, 255, 255, 0.18)',
-      matrix: 'rgba(0, 0, 0, 0.23)',
-      routes: [0x242424, 0x4a4a4a, 0x111111],
-      ambient: { color: 0xffffff, intensity: 1.12 },
-      keyLight: { color: 0xffffff, intensity: 1.85 },
-      rimLight: { color: 0xffffff, intensity: 0.8 },
-      emissive: { color: 0xffffff, intensity: 0.06 },
-      atmosphere: { color: 0xffffff, opacity: 0.1 },
-      wire: { color: 0x1f1f1f },
-      hubNode: 0x050505,
-      normalNode: 0x353535,
-      core: 0xffffff
-    }
-  }
-  return {
-    ocean: ['#ffffff', '#f1f1f1', '#dedede'],
-    shallow: 'rgba(255, 255, 255, 0.48)',
-    land: 'rgba(171, 171, 171, 0.68)',
-    highland: 'rgba(102, 102, 102, 0.24)',
-    ice: 'rgba(255, 255, 255, 0.82)',
-    clouds: 'rgba(255, 255, 255, 0.22)',
-    matrix: 'rgba(0, 0, 0, 0.21)',
-    routes: [0x181818, 0x4a4a4a, 0x6a6a6a],
-    ambient: { color: 0xffffff, intensity: 1.32 },
-    keyLight: { color: 0xffffff, intensity: 1.65 },
-    rimLight: { color: 0xffffff, intensity: 0.62 },
-    emissive: { color: 0xffffff, intensity: 0.04 },
-    atmosphere: { color: 0xffffff, opacity: 0.08 },
-    wire: { color: 0x2f2f2f },
-    hubNode: 0x080808,
-    normalNode: 0x444444,
-    core: 0xffffff
-  }
+  return getGlobeThemeColors(props.dark)
 }
 
 function createEarthTexture() {
@@ -143,136 +105,8 @@ function createEarthTexture() {
 
   if (!ctx) return new THREE.CanvasTexture(canvas)
 
-  const oceanGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-  oceanGradient.addColorStop(0, theme.ocean[0])
-  oceanGradient.addColorStop(0.45, theme.ocean[1])
-  oceanGradient.addColorStop(1, theme.ocean[2])
-  ctx.fillStyle = oceanGradient
+  ctx.fillStyle = theme.ocean[0]
   ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  ctx.fillStyle = theme.shallow
-  drawGeoPolygon(ctx, [
-    [92, 31],
-    [108, 43],
-    [128, 45],
-    [146, 33],
-    [142, 18],
-    [122, 7],
-    [105, 12],
-    [95, 21]
-  ])
-  drawGeoPolygon(ctx, [
-    [96, 15],
-    [119, 22],
-    [132, 11],
-    [124, -4],
-    [105, -9],
-    [92, 0]
-  ])
-
-  ctx.fillStyle = theme.land
-  drawGeoPolygon(ctx, [
-    [-170, 62],
-    [-145, 71],
-    [-112, 72],
-    [-62, 58],
-    [-52, 44],
-    [-76, 24],
-    [-98, 17],
-    [-126, 28],
-    [-136, 46]
-  ])
-  drawGeoPolygon(ctx, [
-    [-82, 12],
-    [-62, 8],
-    [-45, -13],
-    [-50, -35],
-    [-64, -56],
-    [-76, -46],
-    [-81, -18]
-  ])
-  drawGeoPolygon(ctx, [
-    [-11, 36],
-    [20, 39],
-    [39, 31],
-    [51, 12],
-    [43, -13],
-    [32, -34],
-    [18, -35],
-    [5, -18],
-    [-11, 7],
-    [-17, 24]
-  ])
-  drawGeoPolygon(ctx, [
-    [-10, 36],
-    [13, 58],
-    [44, 70],
-    [78, 67],
-    [113, 61],
-    [146, 50],
-    [160, 36],
-    [144, 21],
-    [121, 18],
-    [109, 6],
-    [96, 16],
-    [73, 9],
-    [58, 22],
-    [44, 24],
-    [33, 36],
-    [17, 40]
-  ])
-  drawGeoPolygon(ctx, [
-    [109, -11],
-    [133, -10],
-    [153, -26],
-    [145, -41],
-    [116, -36],
-    [112, -23]
-  ])
-  drawGeoPolygon(ctx, [
-    [-51, 82],
-    [-21, 78],
-    [-18, 65],
-    [-42, 60],
-    [-62, 70]
-  ])
-  drawGeoPolygon(ctx, [
-    [-180, -61],
-    [-90, -64],
-    [0, -62],
-    [90, -64],
-    [180, -61],
-    [180, -90],
-    [-180, -90]
-  ])
-
-  ctx.fillStyle = theme.highland
-  drawGeoPolygon(ctx, [
-    [66, 39],
-    [80, 43],
-    [102, 37],
-    [108, 28],
-    [94, 23],
-    [73, 28]
-  ])
-  drawGeoPolygon(ctx, [
-    [-78, -2],
-    [-68, -11],
-    [-66, -42],
-    [-73, -49],
-    [-78, -28]
-  ])
-
-  ctx.fillStyle = theme.ice
-  drawGeoPolygon(ctx, [
-    [-180, 90],
-    [180, 90],
-    [180, 73],
-    [96, 70],
-    [12, 74],
-    [-72, 70],
-    [-180, 74]
-  ])
 
   drawCloudBand(ctx, theme.clouds, 13, 0.14, 0.18)
   drawCloudBand(ctx, theme.clouds, -34, 0.12, 0.12)
@@ -292,20 +126,6 @@ function geoToCanvasPoint(ctx: CanvasRenderingContext2D, longitude: number, lati
     x: ((longitude + 180) / 360) * width,
     y: ((90 - latitude) / 180) * height
   }
-}
-
-function drawGeoPolygon(ctx: CanvasRenderingContext2D, points: [number, number][]) {
-  ctx.beginPath()
-  points.forEach(([longitude, latitude], index) => {
-    const { x, y } = geoToCanvasPoint(ctx, longitude, latitude)
-    if (index === 0) {
-      ctx.moveTo(x, y)
-      return
-    }
-    ctx.lineTo(x, y)
-  })
-  ctx.closePath()
-  ctx.fill()
 }
 
 function drawCloudBand(
@@ -692,87 +512,70 @@ onBeforeUnmount(() => {
   max-width: 138px;
   align-items: center;
   gap: 5px;
-  padding: 4px 7px;
+  padding: 0;
   overflow: hidden;
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
-  border-radius: 5px;
   opacity: 0;
   transition: opacity 180ms ease;
   will-change: transform, opacity;
 }
 
 .globe-node-label::after {
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  width: 7px;
-  height: 7px;
-  content: '';
-  transform: translateX(-50%) rotate(45deg);
+  display: none;
+  content: none;
 }
 
 /* Dark theme labels */
 .globe-dark .globe-node-label {
-  color: #d4d4d4;
-  background: rgba(10, 10, 10, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  color: rgba(233, 236, 255, 0.72);
+  text-shadow: 0 1px 8px rgba(2, 6, 23, 0.62);
 }
 
 .globe-dark .globe-node-label::after {
-  background: rgba(10, 10, 10, 0.82);
-  border-right: 1px solid rgba(255, 255, 255, 0.18);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  display: none;
 }
 
 .globe-dark .globe-node-label span {
-  color: #a3a3a3;
+  color: rgba(233, 236, 255, 0.58);
   font-size: 10px;
 }
 
 .globe-dark .globe-node-label-hub {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.35);
+  color: #8ea0ff;
+  font-weight: 800;
+  text-shadow: 0 0 14px rgba(62, 85, 233, 0.56);
 }
 
 .globe-dark .globe-node-label-hub::after {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.35);
+  display: none;
 }
 
 /* Light theme labels */
 .globe-light .globe-node-label {
-  color: #525252;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  color: rgba(31, 41, 55, 0.64);
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.88);
 }
 
 .globe-light .globe-node-label::after {
-  background: rgba(255, 255, 255, 0.88);
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  display: none;
 }
 
 .globe-light .globe-node-label span {
-  color: #737373;
+  color: rgba(31, 41, 55, 0.52);
   font-size: 10px;
 }
 
 .globe-light .globe-node-label-hub {
-  color: #0a0a0a;
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.2);
+  color: #3e55e9;
   font-weight: 800;
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.92);
 }
 
 .globe-light .globe-node-label-hub::after {
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.2);
+  display: none;
 }
 </style>

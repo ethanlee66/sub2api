@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="group text-left p-5 rounded-2xl min-h-[280px] w-full bg-white/70 backdrop-blur-xl border border-gray-200/80 shadow-card dark:bg-dark-800/60 dark:border-dark-700/70 hover:-translate-y-1 hover:shadow-card-hover dark:hover:border-primary-500/30 hover:border-gray-300 transition-all duration-300 ease-out flex flex-col"
+    class="monitor-card"
     @click="emit('click')"
   >
     <!-- Header: icon + name/model + status chip -->
@@ -126,3 +126,26 @@ const extraModelsCountLabel = computed(() => {
   return t('monitorCommon.extraModelsCount', { n: count })
 })
 </script>
+
+<style scoped>
+.monitor-card {
+  display: flex;
+  width: 100%;
+  min-height: 264px;
+  flex-direction: column;
+  padding: 20px;
+  color: inherit;
+  text-align: left;
+  background: var(--user-panel-bg, rgb(255 255 255 / 0.78));
+  border: 1px solid var(--user-panel-border-soft, rgb(229 231 235));
+  border-radius: 8px;
+  transition:
+    border-color var(--user-motion-fast, 160ms ease),
+    background var(--user-motion-fast, 160ms ease);
+}
+
+.monitor-card:hover {
+  background: var(--user-control-hover, #eef2ff);
+  border-color: var(--user-brand-border, #c8d1ff);
+}
+</style>

@@ -1,148 +1,55 @@
 <template>
-  <!-- Row 1: Core Stats -->
-  <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-    <!-- Balance -->
-    <div v-if="!isSimple" class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-emerald-100 p-2 dark:bg-emerald-900/30">
-          <svg class="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.balance') }}</p>
-          <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">${{ formatBalance(balance) }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('common.available') }}</p>
-        </div>
+  <section class="dashboard-metrics" aria-label="Dashboard metrics">
+    <article
+      v-for="metric in visibleMetrics"
+      :key="metric.key"
+      class="metric-item"
+      :class="`metric-${metric.tone}`"
+    >
+      <div class="metric-icon" aria-hidden="true">
+        <Icon :name="metric.icon" size="md" :stroke-width="2" />
       </div>
-    </div>
-
-    <!-- API Keys -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-          <Icon name="key" size="md" class="text-blue-600 dark:text-blue-400" :stroke-width="2" />
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.apiKeys') }}</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ stats?.total_api_keys || 0 }}</p>
-          <p class="text-xs text-green-600 dark:text-green-400">{{ stats?.active_api_keys || 0 }} {{ t('common.active') }}</p>
-        </div>
+      <div class="min-w-0">
+        <p class="metric-label">{{ metric.label }}</p>
+        <p class="metric-value">
+          <template v-if="metric.parts">
+            <span :class="metric.primaryClass">{{ metric.parts.primary }}</span>
+            <span class="metric-value-muted">{{ metric.parts.secondary }}</span>
+          </template>
+          <template v-else>
+            {{ metric.value }}
+          </template>
+        </p>
+        <p class="metric-meta">
+          <template v-if="metric.metaParts">
+            <span>{{ metric.metaParts.label }}</span>
+            <span :class="metric.metaParts.primaryClass">{{ metric.metaParts.primary }}</span>
+            <span>{{ metric.metaParts.secondary }}</span>
+          </template>
+          <template v-else>
+            {{ metric.meta }}
+          </template>
+        </p>
       </div>
-    </div>
-
-    <!-- Today Requests -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
-          <Icon name="chart" size="md" class="text-green-600 dark:text-green-400" :stroke-width="2" />
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.todayRequests') }}</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ stats?.today_requests || 0 }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('common.total') }}: {{ formatNumber(stats?.total_requests || 0) }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Today Cost -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
-          <Icon name="dollar" size="md" class="text-purple-600 dark:text-purple-400" :stroke-width="2" />
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.todayCost') }}</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white">
-            <span class="text-purple-600 dark:text-purple-400" :title="t('dashboard.actual')">${{ formatCost(stats?.today_actual_cost || 0) }}</span>
-            <span class="text-sm font-normal text-gray-400 dark:text-gray-500" :title="t('dashboard.standard')"> / ${{ formatCost(stats?.today_cost || 0) }}</span>
-          </p>
-          <p class="text-xs">
-            <span class="text-gray-500 dark:text-gray-400">{{ t('common.total') }}: </span>
-            <span class="text-purple-600 dark:text-purple-400" :title="t('dashboard.actual')">${{ formatCost(stats?.total_actual_cost || 0) }}</span>
-            <span class="text-gray-400 dark:text-gray-500" :title="t('dashboard.standard')"> / ${{ formatCost(stats?.total_cost || 0) }}</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Row 2: Token Stats -->
-  <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-    <!-- Today Tokens -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30">
-          <Icon name="cube" size="md" class="text-amber-600 dark:text-amber-400" :stroke-width="2" />
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.todayTokens') }}</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatTokens(stats?.today_tokens || 0) }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('dashboard.input') }}: {{ formatTokens(stats?.today_input_tokens || 0) }} / {{ t('dashboard.output') }}: {{ formatTokens(stats?.today_output_tokens || 0) }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Total Tokens -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-indigo-100 p-2 dark:bg-indigo-900/30">
-          <Icon name="database" size="md" class="text-indigo-600 dark:text-indigo-400" :stroke-width="2" />
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.totalTokens') }}</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatTokens(stats?.total_tokens || 0) }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('dashboard.input') }}: {{ formatTokens(stats?.total_input_tokens || 0) }} / {{ t('dashboard.output') }}: {{ formatTokens(stats?.total_output_tokens || 0) }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Performance (RPM/TPM) -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-violet-100 p-2 dark:bg-violet-900/30">
-          <Icon name="bolt" size="md" class="text-violet-600 dark:text-violet-400" :stroke-width="2" />
-        </div>
-        <div class="flex-1">
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.performance') }}</p>
-          <div class="flex items-baseline gap-2">
-            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatTokens(stats?.rpm || 0) }}</p>
-            <span class="text-xs text-gray-500 dark:text-gray-400">RPM</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <p class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ formatTokens(stats?.tpm || 0) }}</p>
-            <span class="text-xs text-gray-500 dark:text-gray-400">TPM</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Avg Response Time -->
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="rounded-lg bg-rose-100 p-2 dark:bg-rose-900/30">
-          <Icon name="clock" size="md" class="text-rose-600 dark:text-rose-400" :stroke-width="2" />
-        </div>
-        <div>
-          <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.avgResponse') }}</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatDuration(stats?.average_duration_ms || 0) }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('dashboard.averageTime') }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+    </article>
+  </section>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/icons/Icon.vue'
 import type { UserDashboardStats as UserStatsType } from '@/api/usage'
 
-defineProps<{
+type MetricTone = 'money' | 'keys' | 'traffic' | 'cost' | 'token' | 'total' | 'speed' | 'time'
+type IconName = InstanceType<typeof Icon>['$props']['name']
+
+const props = defineProps<{
   stats: UserStatsType
   balance: number
   isSimple: boolean
 }>()
+
 const { t } = useI18n()
 
 const formatBalance = (b: number) =>
@@ -153,10 +60,258 @@ const formatBalance = (b: number) =>
 
 const formatNumber = (n: number) => n.toLocaleString()
 const formatCost = (c: number) => c.toFixed(4)
-const formatTokens = (t: number) => {
-  if (t >= 1_000_000) return `${(t / 1_000_000).toFixed(1)}M`
-  if (t >= 1000) return `${(t / 1000).toFixed(1)}K`
-  return t.toString()
+const formatTokens = (value: number) => {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
+  return value.toString()
 }
-const formatDuration = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${ms.toFixed(0)}ms`
+const formatDuration = (ms: number) =>
+  ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${ms.toFixed(0)}ms`
+
+const visibleMetrics = computed(() => {
+  const allMetrics: Array<{
+    key: string
+    tone: MetricTone
+    icon: IconName
+    label: string
+    value?: string | number
+    meta?: string
+    parts?: { primary: string; secondary: string }
+    metaParts?: { label: string; primary: string; secondary: string; primaryClass: string }
+    primaryClass?: string
+    hidden?: boolean
+  }> = [
+    {
+      key: 'balance',
+      tone: 'money',
+      icon: 'creditCard',
+      label: t('dashboard.balance'),
+      value: `$${formatBalance(props.balance)}`,
+      meta: t('common.available'),
+      hidden: props.isSimple
+    },
+    {
+      key: 'apiKeys',
+      tone: 'keys',
+      icon: 'key',
+      label: t('dashboard.apiKeys'),
+      value: props.stats?.total_api_keys || 0,
+      meta: `${props.stats?.active_api_keys || 0} ${t('common.active')}`
+    },
+    {
+      key: 'todayRequests',
+      tone: 'traffic',
+      icon: 'chart',
+      label: t('dashboard.todayRequests'),
+      value: props.stats?.today_requests || 0,
+      meta: `${t('common.total')}: ${formatNumber(props.stats?.total_requests || 0)}`
+    },
+    {
+      key: 'todayCost',
+      tone: 'cost',
+      icon: 'dollar',
+      label: t('dashboard.todayCost'),
+      parts: {
+        primary: `$${formatCost(props.stats?.today_actual_cost || 0)}`,
+        secondary: ` / $${formatCost(props.stats?.today_cost || 0)}`
+      },
+      metaParts: {
+        label: `${t('common.total')}: `,
+        primary: `$${formatCost(props.stats?.total_actual_cost || 0)}`,
+        secondary: ` / $${formatCost(props.stats?.total_cost || 0)}`,
+        primaryClass: 'metric-accent-cost'
+      },
+      primaryClass: 'metric-accent-cost'
+    },
+    {
+      key: 'todayTokens',
+      tone: 'token',
+      icon: 'cube',
+      label: t('dashboard.todayTokens'),
+      value: formatTokens(props.stats?.today_tokens || 0),
+      meta: `${t('dashboard.input')}: ${formatTokens(props.stats?.today_input_tokens || 0)} / ${t('dashboard.output')}: ${formatTokens(props.stats?.today_output_tokens || 0)}`
+    },
+    {
+      key: 'totalTokens',
+      tone: 'total',
+      icon: 'database',
+      label: t('dashboard.totalTokens'),
+      value: formatTokens(props.stats?.total_tokens || 0),
+      meta: `${t('dashboard.input')}: ${formatTokens(props.stats?.total_input_tokens || 0)} / ${t('dashboard.output')}: ${formatTokens(props.stats?.total_output_tokens || 0)}`
+    },
+    {
+      key: 'performance',
+      tone: 'speed',
+      icon: 'bolt',
+      label: t('dashboard.performance'),
+      value: `${formatTokens(props.stats?.rpm || 0)} RPM`,
+      meta: `${formatTokens(props.stats?.tpm || 0)} TPM`
+    },
+    {
+      key: 'avgResponse',
+      tone: 'time',
+      icon: 'clock',
+      label: t('dashboard.avgResponse'),
+      value: formatDuration(props.stats?.average_duration_ms || 0),
+      meta: t('dashboard.averageTime')
+    }
+  ]
+
+  return allMetrics.filter((metric) => !metric.hidden)
+})
 </script>
+
+<style scoped>
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+  border-bottom: 1px solid var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.metric-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 104px;
+  padding: 18px 22px;
+}
+
+.metric-item::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: 0;
+  bottom: 20px;
+  width: 1px;
+  background: var(--user-panel-border-soft, rgba(200, 209, 255, 0.52));
+}
+
+.metric-item:nth-child(4n)::after,
+.metric-item:last-child::after {
+  display: none;
+}
+
+.metric-icon {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  color: var(--metric-color);
+  background: color-mix(in srgb, var(--metric-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--metric-color) 18%, transparent);
+  border-radius: 6px;
+}
+
+.metric-money {
+  --metric-color: #059669;
+}
+
+.metric-keys {
+  --metric-color: #2563eb;
+}
+
+.metric-traffic {
+  --metric-color: #0d9488;
+}
+
+.metric-cost {
+  --metric-color: #7c3aed;
+}
+
+.metric-token {
+  --metric-color: #d97706;
+}
+
+.metric-total {
+  --metric-color: #4f46e5;
+}
+
+.metric-speed {
+  --metric-color: #6d28d9;
+}
+
+.metric-time {
+  --metric-color: #e11d48;
+}
+
+.metric-label {
+  color: var(--user-text-soft, #737b8f);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.metric-value {
+  margin-top: 4px;
+  color: var(--user-text-strong, #15172b);
+  font-size: 24px;
+  font-weight: 720;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.metric-value-muted {
+  color: var(--user-text-soft, #737b8f);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.metric-meta {
+  margin-top: 6px;
+  color: var(--user-text-muted, #5f6678);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.metric-accent-cost {
+  color: var(--metric-color);
+}
+
+@media (max-width: 1279px) {
+  .dashboard-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric-item:nth-child(4n)::after {
+    display: block;
+  }
+
+  .metric-item:nth-child(2n)::after,
+  .metric-item:last-child::after {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .dashboard-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-item {
+    min-height: 92px;
+    padding: 16px 4px;
+  }
+
+  .metric-item::after {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 50px;
+    width: auto;
+    height: 1px;
+    display: block;
+  }
+
+  .metric-item:nth-child(2n)::after {
+    display: block;
+  }
+
+  .metric-item:last-child::after {
+    display: none;
+  }
+}
+</style>

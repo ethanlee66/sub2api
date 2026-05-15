@@ -12,7 +12,7 @@
 
     <!-- 滚动区域：表格 -->
     <div class="layout-section-scrollable">
-      <div class="card table-scroll-container">
+      <div class="table-scroll-container">
         <slot name="table" />
       </div>
     </div>
@@ -46,21 +46,31 @@ onUnmounted(() => {
 <style scoped>
 /* 桌面端：Flexbox 布局 */
 .table-page-layout {
-  @apply flex flex-col gap-6;
-  height: calc(100vh - 64px - 4rem); /* 减去 header + lg:p-8 的上下padding */
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  height: calc(100vh - 64px - 3rem);
 }
 
 .layout-section-fixed {
-  @apply flex-shrink-0;
+  flex-shrink: 0;
 }
 
 .layout-section-scrollable {
-  @apply flex-1 min-h-0 flex flex-col;
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
 }
 
 /* 表格滚动容器 - 增强版表体滚动方案 */
 .table-scroll-container {
-  @apply flex flex-col overflow-hidden h-full bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 shadow-sm;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  background: var(--user-panel-bg, rgb(255 255 255 / 0.82));
+  border-block: 1px solid var(--user-panel-border-soft, rgb(229 231 235));
 }
 
 .table-scroll-container :deep(.table-wrapper) {
@@ -76,7 +86,8 @@ onUnmounted(() => {
 }
 
 .table-scroll-container :deep(thead) {
-  @apply bg-gray-50/80 dark:bg-dark-800/80 backdrop-blur-sm;
+  background: var(--user-panel-bg-muted, rgb(249 250 251 / 0.82));
+  backdrop-filter: blur(10px);
 }
 
 .table-scroll-container :deep(tbody) {
@@ -84,29 +95,42 @@ onUnmounted(() => {
 }
 
 .table-scroll-container :deep(th) {
-  @apply px-5 py-4 text-left text-sm font-medium text-gray-600 dark:text-dark-300 border-b border-gray-200 dark:border-dark-700;
+  padding: 14px 18px;
+  color: var(--user-text-muted, rgb(75 85 99));
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgb(229 231 235));
 }
 
 .table-scroll-container :deep(td) {
-  @apply px-5 py-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-dark-800;
+  padding: 15px 18px;
+  color: var(--user-text-body, rgb(55 65 81));
+  font-size: 13px;
+  border-bottom: 1px solid var(--user-panel-border-soft, rgb(243 244 246));
 }
 
 /* 移动端：恢复正常滚动 */
 .table-page-layout.mobile-mode .table-scroll-container {
-  @apply h-auto overflow-visible border-none shadow-none bg-transparent;
+  height: auto;
+  overflow: visible;
+  background: transparent;
+  border: 0;
 }
 
 .table-page-layout.mobile-mode .layout-section-scrollable {
-  @apply flex-none min-h-fit;
+  min-height: fit-content;
+  flex: none;
 }
 
 .table-page-layout.mobile-mode .table-scroll-container :deep(.table-wrapper) {
-  @apply overflow-visible;
+  overflow: visible;
 }
 
 .table-page-layout.mobile-mode .table-scroll-container :deep(table) {
-  @apply flex-none;
   display: table;
   min-width: 100%;
+  flex: none;
 }
 </style>
